@@ -1,0 +1,53 @@
+# Publica la API de la tienda (carpeta api/) como Neon Function cada vez que cambia en main.
+# Necesita dos secretos del repositorio (Settings → Secrets and variables → Actions):
+#   NEON_API_KEY  clave de la API de Neon (console.neon.tech → Account settings → API keys)
+#   PLEX_TOKEN    clave que usa el script de Plex para sincronizar precios y stock
+name: Desplegar API
+
+on:
+  push:
+    branches: [main]
+    paths: ["api/**", ".github/workflows/desplegar-api.yml"]
+  workflow_dispatch:
+
+env:
+  NEON_PROJECT: royal-silence-39904482
+  NEON_BRANCH: br-bold-surf-ae4ctdc9
+  SLUG: api
+
+jobs:
+  desplegar:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - run: npm run build
+      - name: Subir a Neon
+        env:
+          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+          PLEX_TOKEN: ${{ secrets.PLEX_TOKEN }}
+        run: |
+          test -n "$NEON_API_KEY" || { echo "Falta el secreto NEON_API_KEY"; exit 1; }
+          ENVJSON=$(jq -nc --arg p "$PLEX_TOKEN" 'if $p == "" then {} else {PLEX_TOKEN: $p} end')
+          BASE="https://console.neon.tech/api/v2/projects/$NEON_PROJECT/branches/$NEON_BRANCH/functions/$SLUG"
+          curl -fsS -X POST "$BASE/deployments" -H "Authorization: Bearer $NEON_API_KEY" \
+            -F "zip=@function.zip" -F "runtime=nodejs24" -F "environment=$ENVJSON" > /dev/null
+          for i in $(seq 1 60); do
+            R=$(curl -fsS "$BASE" -H "Authorization: Bearer $NEON_API_KEY")
+            ESTADO=$(echo "$R" | jq -r '(.function // .).current_deployment.status')
+            echo "Estado: $ESTADO"
+            [ "$ESTADO" = "completed" ] && { echo "$R" | jq -r '"URL: " + (.function // .).invocation_url'; exit 0; }
+            [ "$ESTADO" = "failed" ] && { echo "$R"; exit 1; }
+            sleep 5
+          done
+          echo "La publicación tardó demasiado"; exit 1
+      - name: Probar
+        run: |
+          URL="https://$NEON_BRANCH-$SLUG.compute.c-2.us-east-2.aws.neon.tech"
+          for i in 1 2 3 4 5 6; do curl -fsS "$URL/v1/salud" && exit 0; sleep 5; done; exit 1

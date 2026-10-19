@@ -370,10 +370,12 @@ pre.order{white-space:pre-wrap; background:var(--surface); border-radius:var(--r
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script src="packshot.js"></script>
+<script src="datos.js"></script>
 <script>
 (() => {
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const imgUrl = id => window.PuraDatos ? PuraDatos.img(id) : "/_blob/" + id;
 const slug = s => String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
 const money = n => "$ " + Math.round(Number(n)||0).toLocaleString("es-AR");
 
@@ -403,7 +405,7 @@ const SHAPE = {
   "farmacia":'<svg viewBox="0 0 100 140"><rect x="12" y="30" width="76" height="96" rx="6" fill="currentColor" opacity=".3"/><rect x="12" y="30" width="76" height="20" fill="currentColor" opacity=".2"/><path d="M50 70v32M34 86h32" stroke="currentColor" stroke-width="8" stroke-linecap="round" opacity=".55"/></svg>',
   "cuidado-personal":'<svg viewBox="0 0 100 140"><rect x="44" y="6" width="12" height="18" rx="3" fill="currentColor" opacity=".55"/><path d="M32 24h36v8l8 10v84a8 8 0 0 1-8 8H32a8 8 0 0 1-8-8V42l8-10z" fill="currentColor" opacity=".3"/><rect x="34" y="70" width="32" height="26" rx="3" fill="currentColor" opacity=".35"/></svg>',
 };
-const imgSrc = p => p && p.imagenId ? "/_blob/" + p.imagenId : (p && p.imagen) || "";
+const imgSrc = p => p && p.imagenId ? imgUrl(p.imagenId) : (p && p.imagen) || "";
 const media = (p, alt) => { const s = imgSrc(p); return s ? `<img src="${esc(s)}" alt="${esc(alt ?? p.nombre)}" loading="lazy" decoding="async">` : `<div class="ph" aria-hidden="true">${window.Packshot ? Packshot.svg(p) : (SHAPE[p.categoria] || SHAPE["cuidado-personal"])}</div>`; };
 const off = p => p.precioAnterior > p.precio ? Math.round((1 - p.precio / p.precioAnterior) * 100) : 0;
 
@@ -454,7 +456,7 @@ function renderBanners(){
       const fg = dark ? "#FFFFFF" : "#121110";
       const btn = dark ? `style="background:#fff;color:#121110"` : `style="background:#121110;color:#fff"`;
       const target = b.marca ? `data-brand="${esc(b.marca)}"` : b.categoria ? `data-cat="${esc(b.categoria)}"` : `data-goto="catalog"`;
-      const s = b.imagenId ? "/_blob/" + b.imagenId : "";
+      const s = b.imagenId ? imgUrl(b.imagenId) : "";
       return `<div class="slide" style="background:${esc(bg)};color:${fg}" role="group" aria-roledescription="banner" aria-label="${i+1} de ${list.length}">
         <div>${b.marca ? `<p class="s-brand">${esc(b.marca)}</p>` : ""}<h2>${esc(b.titulo || b.marca || "")}</h2>${b.bajada ? `<p class="s-sub">${esc(b.bajada)}</p>` : ""}
         <div class="s-cta"><button class="btn" ${btn} ${target}>${esc(b.cta || "Ver productos")}</button></div></div>
@@ -721,11 +723,13 @@ function live(db, path, onData, onFail){
   start();
   setTimeout(() => { if (!got) once(); }, 5000);
 }
-/* Fuera de claude.ai no hay base de datos en vivo: se leen los JSON de /data */
+/* Sin base en vivo (ni claude.ai ni Neon) se leen los JSON de /data */
 async function loadStatic(name){ try { const r = await fetch("data/" + name + ".json", { cache:"no-store" }); if (!r.ok) return null; const a = await r.json(); return { docs: a.map(x => ({ id:x.id, data:() => { const { id, ...rest } = x; return rest; } })) }; } catch (e) { return null; } }
 (async () => {
   const use = window.claude && window.claude.use ? window.claude.use.bind(window.claude) : null;
-  const db = use ? await Promise.resolve(use("db")).catch(() => null) : null;
+  let db = use ? await Promise.resolve(use("db")).catch(() => null) : null;
+  /* Fuera de claude.ai: base propia en Neon; si no responde, quedan los JSON de /data */
+  if (!db && window.PuraDatos && PuraDatos.activa){ const n = PuraDatos.db(0); try { await n.collection("productos").get(); db = n; } catch (e) {} }
   S.db = db;
   if (!db){
     const p = await loadStatic("productos"); if (p) S.products = p.docs.map(d => ({ id:d.id, ...d.data() })).map(x => ({ ...x, precio:Number(x.precio)||0, precioAnterior:Number(x.precioAnterior)||0 }));

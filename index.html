@@ -482,6 +482,7 @@ footer{background:var(--ink); color:var(--cream); overflow:hidden}
 </footer>
 
 <script src="packshot.js"></script>
+<script src="datos.js"></script>
 <script>
 (() => {
 const h = (location.hash || "").slice(1);
@@ -489,6 +490,7 @@ if (h === "backoffice") { location.replace("backoffice.html"); return; }
 addEventListener("hashchange", () => { if (location.hash === "#backoffice") location.replace("backoffice.html"); });
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const imgUrl = id => window.PuraDatos ? PuraDatos.img(id) : "/_blob/" + id;
 const money = n => "$ " + Math.round(Number(n)||0).toLocaleString("es-AR");
 const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -511,7 +513,7 @@ const CATS = [
 ];
 const ALL_CATS = [...CATS.map(c => ({id:c.id, label:c.id === "farmacia" ? "Farmacia" : c.label})), {id:"cuidado-personal", label:"Cuidado personal"}];
 const catArt = (id, colors) => { const c = CATS.find(x => x.id === id); const fn = ART[c ? c.art : (id === "cuidado-personal" ? "tube" : "serum")]; return colors ? fn(...colors) : fn(); };
-const productArt = p => p.imagenId ? `<img src="/_blob/${esc(p.imagenId)}" alt="${esc(p.nombre)}">` : (window.Packshot ? Packshot.svg(p) : catArt(p.categoria));
+const productArt = p => p.imagenId ? `<img src="${esc(imgUrl(p.imagenId))}" alt="${esc(p.nombre)}">` : (window.Packshot ? Packshot.svg(p) : catArt(p.categoria));
 const DEFAULT_P = {
   "dermocosmetica":{ nombre:"Sérum facial 30 ml", marca:"Purafarma", categoria:"dermocosmetica" },
   "perfumeria":{ nombre:"Eau de parfum 100 ml", marca:"Purafarma", categoria:"perfumeria" },
@@ -566,7 +568,7 @@ const setSport = on => { const was = document.documentElement.hasAttribute("data
 let heroSet = [], heroIdx = 0, heroTimer = 0;
 function renderHeroBg(){
   const list = (S.portada || []).filter(x => x.activo !== false && x.imagenId).sort((a,b) => (a.orden||0) - (b.orden||0));
-  $("#heroBg").innerHTML = list.map(x => `<div class="hb" data-id="${esc(x.id)}" data-modo="${x.modo === "sport" ? "sport" : "general"}"><img src="/_blob/${esc(x.imagenId)}" alt="" style="object-position:${x.foco === "arriba" ? "50% 15%" : x.foco === "abajo" ? "50% 85%" : "50% 50%"}"><i style="opacity:${Math.min(.85, Math.max(0, (Number(x.oscuro ?? 45)) / 100))}"></i></div>`).join("") + `<div class="hb-dots" id="hbDots"></div>`;
+  $("#heroBg").innerHTML = list.map(x => `<div class="hb" data-id="${esc(x.id)}" data-modo="${x.modo === "sport" ? "sport" : "general"}"><img src="${esc(imgUrl(x.imagenId))}" alt="" style="object-position:${x.foco === "arriba" ? "50% 15%" : x.foco === "abajo" ? "50% 85%" : "50% 50%"}"><i style="opacity:${Math.min(.85, Math.max(0, (Number(x.oscuro ?? 45)) / 100))}"></i></div>`).join("") + `<div class="hb-dots" id="hbDots"></div>`;
   pickHeroSet();
 }
 function pickHeroSet(){
@@ -788,11 +790,13 @@ function live(db, path, onData, onFail){
   start();
   setTimeout(() => { if (!got) once(); }, 5000);
 }
-/* Fuera de claude.ai no hay base de datos en vivo: se leen los JSON de /data */
+/* Sin base en vivo (ni claude.ai ni Neon) se leen los JSON de /data */
 async function loadStatic(name){ try { const r = await fetch("data/" + name + ".json", { cache:"no-store" }); if (!r.ok) return null; const a = await r.json(); return { docs: a.map(x => ({ id:x.id, data:() => { const { id, ...rest } = x; return rest; } })) }; } catch (e) { return null; } }
 (async () => {
   const use = window.claude && window.claude.use ? window.claude.use.bind(window.claude) : null;
-  const db = use ? await Promise.resolve(use("db")).catch(() => null) : null;
+  let db = use ? await Promise.resolve(use("db")).catch(() => null) : null;
+  /* Fuera de claude.ai: base propia en Neon; si no responde, quedan los JSON de /data */
+  if (!db && window.PuraDatos && PuraDatos.activa){ const n = PuraDatos.db(0); try { await n.collection("productos").get(); db = n; } catch (e) {} }
   if (!db){
     const p = await loadStatic("productos"); if (p){ S.products = p.docs.map(d => ({ id:d.id, ...d.data() })).map(x => ({ ...x, precio:Number(x.precio)||0, precioAnterior:Number(x.precioAnterior)||0 })); renderAll(); }
     const h = await loadStatic("portada"); if (h){ S.portada = h.docs.map(d => ({ id:d.id, ...d.data() })); renderHeroBg(); }

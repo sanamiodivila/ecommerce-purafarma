@@ -196,6 +196,14 @@ input[type=range]{accent-color:var(--pink); width:100%}
 .gate .box{background:var(--surface); border-radius:16px; padding:40px 32px; max-width:440px; text-align:center; display:grid; gap:12px; justify-items:center}
 .gate h1{font-size:22px; font-weight:600}
 .gate p{color:var(--ink-2)}
+.gate form{display:grid; gap:12px; width:100%; text-align:left; margin-top:6px}
+.gate form .btn{justify-self:stretch; justify-content:center}
+.admins{display:grid; gap:8px}
+.admins li{display:flex; align-items:center; justify-content:space-between; gap:12px; background:var(--surface-2); border-radius:10px; padding:10px 14px; list-style:none}
+.admins small{color:var(--ink-2)}
+.hist{width:100%; min-width:560px; font-size:13px}
+#syncHist{min-width:0}
+.hist td,.hist th{padding:8px 10px}
 
 .toast{position:fixed; left:50%; bottom:calc(24px + env(safe-area-inset-bottom,0px)); transform:translate(-50%,20px); opacity:0; background:var(--ink); color:var(--bg); padding:11px 18px; border-radius:999px; font-weight:500; z-index:80; pointer-events:none; transition:transform 280ms var(--ease-out), opacity 200ms ease; max-width:calc(100% - 32px)}
 .toast.on{transform:translate(-50%,0); opacity:1}
@@ -233,6 +241,7 @@ input[type=range]{accent-color:var(--pink); width:100%}
       <button data-view="banners"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 15 5-4 4 3 3-2 6 4"/></svg>Banners<span class="cnt num" id="nB"></span></button>
       <button data-view="portada"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 12h10M9 15h6"/></svg>Portada<span class="cnt num" id="nH"></span></button>
       <button data-view="importar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/></svg>Importar</button>
+      <button data-view="cuenta" id="navCuenta" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>Cuenta</button>
     </nav>
     <div class="side-foot">
       <a href="index.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg><span>Ver la portada</span></a>
@@ -252,10 +261,12 @@ input[type=range]{accent-color:var(--pink); width:100%}
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script src="packshot.js"></script>
+<script src="datos.js"></script>
 <script>
 (() => {
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const imgUrl = id => window.PuraDatos ? PuraDatos.img(id) : "/_blob/" + id;
 const slug = s => String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
 const money = n => "$ " + Math.round(Number(n)||0).toLocaleString("es-AR");
 const CATS = [
@@ -266,13 +277,13 @@ const CATS = [
 const catLabel = id => (CATS.find(c => c.id === id) || {}).label || (id ? id.replace(/-/g," ").replace(/^./, m => m.toUpperCase()) : "");
 const normCat = v => { const s = slug(v); const hit = CATS.find(c => c.id === s || slug(c.label) === s || s.startsWith(c.id.split("-")[0])); return hit ? hit.id : s; };
 const PH = '<svg viewBox="0 0 100 140"><rect x="38" y="6" width="24" height="20" rx="4" fill="currentColor" opacity=".5"/><path d="M30 26h40l6 104a6 6 0 0 1-6 6H30a6 6 0 0 1-6-6z" fill="currentColor" opacity=".3"/></svg>';
-const thumb = p => p && p.imagenId ? `<img src="/_blob/${esc(p.imagenId)}" alt="" loading="lazy">` : (p && p.nombre && window.Packshot ? Packshot.svg(p) : PH);
+const thumb = p => p && p.imagenId ? `<img src="${esc(imgUrl(p.imagenId))}" alt="" loading="lazy">` : (p && p.nombre && window.Packshot ? Packshot.svg(p) : PH);
 const LOW = 5;
 const stockPill = s => s <= 0 ? `<span class="pill bad">Sin stock</span>` : s <= LOW ? `<span class="pill warn">Stock bajo</span>` : `<span class="pill ok">Disponible</span>`;
 const toNum = v => { if (v == null) return null; let s = String(v).replace(/[^\d,.-]/g,""); if (!s) return null; if (s.includes(",") && s.lastIndexOf(",") > s.lastIndexOf(".")) s = s.replace(/\./g,"").replace(",","."); else if (/\.\d{3}($|\D)/.test(s) && !s.includes(",")) s = s.replace(/\./g,""); else s = s.replace(/,/g,""); const n = Number(s); return isFinite(n) ? n : null; };
 
 let tt; const toast = m => { const t = $("#toast"); t.textContent = m; t.classList.add("on"); clearTimeout(tt); tt = setTimeout(() => t.classList.remove("on"), 2400); };
-const errMsg = e => { const c = e && e.code; return c === "quota_exceeded" ? "Se llenó el espacio de la tienda: borrá productos o fotos que no uses." : c === "invalid_argument" ? "Tu usuario no tiene permiso para modificar la tienda." : c === "unavailable" ? "Sin conexión con la base. Probá de nuevo en unos segundos." : (e && e.message) || "No se pudo guardar. Probá de nuevo."; };
+const errMsg = e => { const c = e && e.code; if (c === "unauthenticated" && S.neon){ setTimeout(() => location.reload(), 1600); return "Tu sesión venció. Volvé a ingresar."; } return c === "quota_exceeded" ? "Se llenó el espacio de la tienda: borrá productos o fotos que no uses." : c === "invalid_argument" ? "Tu usuario no tiene permiso para modificar la tienda." : c === "unavailable" ? "Sin conexión con la base. Probá de nuevo en unos segundos." : (e && e.message) || "No se pudo guardar. Probá de nuevo."; };
 
 const S = { db:null, assets:null, products:[], banners:[], portada:[], view:"productos", q:"", cat:"", stat:"", sort:"az", delArm:null, loaded:false };
 const byId = id => S.products.find(p => p.id === id);
@@ -286,6 +297,7 @@ function render(){
   if (S.view === "productos") return viewProducts();
   if (S.view === "banners") return viewBanners();
   if (S.view === "portada") return viewPortada();
+  if (S.view === "cuenta") return viewCuenta();
   viewImport();
 }
 
@@ -445,7 +457,7 @@ function productDrawer(p){
 /* ---------- Banners ---------- */
 const lum = hex => { const m = /^#?([0-9a-f]{6})$/i.exec(hex||""); if (!m) return 1; const n = parseInt(m[1],16); const ch = [n>>16, n>>8&255, n&255].map(v => { v/=255; return v<=.03928 ? v/12.92 : ((v+.055)/1.055)**2.4; }); return .2126*ch[0]+.7152*ch[1]+.0722*ch[2]; };
 const bPrev = b => { const bg = b.color || "#121110"; const fg = lum(bg) < .35 ? "#fff" : "#121110";
-  return `<div class="bprev" style="background:${esc(bg)};color:${fg}"><div>${b.marca ? `<p class="m">${esc(b.marca)}</p>` : ""}<p class="t">${esc(b.titulo || b.marca || "Sin título")}</p></div>${b.imagenId ? `<img src="/_blob/${esc(b.imagenId)}" alt="">` : `<div class="w">${esc(b.marca || "Purafarma")}</div>`}</div>`; };
+  return `<div class="bprev" style="background:${esc(bg)};color:${fg}"><div>${b.marca ? `<p class="m">${esc(b.marca)}</p>` : ""}<p class="t">${esc(b.titulo || b.marca || "Sin título")}</p></div>${b.imagenId ? `<img src="${esc(imgUrl(b.imagenId))}" alt="">` : `<div class="w">${esc(b.marca || "Purafarma")}</div>`}</div>`; };
 function viewBanners(){
   const list = [...S.banners].sort((a,b) => (a.orden||0)-(b.orden||0));
   $("#main").innerHTML = `<div class="head"><div><h1>Banners</h1><p>Pasan solos en la portada, en el orden de la posición. Cada uno lleva a su marca o categoría.</p></div><button class="btn btn-pink" id="newB"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Nuevo banner</button></div>
@@ -520,7 +532,7 @@ function viewPortada(){
     </section>
     <div class="hgrid" id="hgrid">${list.length ? list.map(x => `
       <article class="hcard" data-hid="${esc(x.id)}">
-        <div class="hprev" style="--o:${(Number(x.oscuro ?? 45))/100}"><img src="/_blob/${esc(x.imagenId)}" alt="" style="object-position:${x.foco === "arriba" ? "50% 15%" : x.foco === "abajo" ? "50% 85%" : "50% 50%"}"><i></i>
+        <div class="hprev" style="--o:${(Number(x.oscuro ?? 45))/100}"><img src="${esc(imgUrl(x.imagenId))}" alt="" style="object-position:${x.foco === "arriba" ? "50% 15%" : x.foco === "abajo" ? "50% 85%" : "50% 50%"}"><i></i>
           <div class="hlogo"><b>PURAFARMA</b><span>${x.modo === "sport" ? `<em>SPORT</em>` : "FARMACIAS Y PERFUMERÍAS"}</span></div></div>
         <div class="hctrl">
           <div class="row2">
@@ -640,7 +652,15 @@ function viewImport(){
     <section class="panel"><h2>Fotos en lote</h2>
       <p>Nombrá cada foto con el código del producto, por ejemplo <code>7790001.jpg</code>, y elegilas todas juntas.</p>
       <div class="field"><label for="imgBatch">Fotos</label><input type="file" id="imgBatch" accept="image/*" multiple></div>
-      <div id="imgPrev"></div></section>`;
+      <div id="imgPrev"></div></section>
+    ${S.neon ? `<section class="panel"><h2>Sincronización con Plex</h2>
+      <p>El script de la computadora de la farmacia envía el listado de Plex y actualiza <b>precio y stock</b> de los productos que ya están en la tienda (los busca por código). No cambia nombres, fotos ni descripciones, y no crea productos nuevos: esos se cargan con la planilla de arriba.</p>
+      <div id="syncHist"><p>Cargando historial…</p></div></section>` : ""}`;
+  if (S.neon) PuraDatos.sincronizaciones().then(list => {
+    const box = $("#syncHist"); if (!box) return;
+    const f = d => new Date(d).toLocaleString("es-AR", { day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit" });
+    box.innerHTML = !list.length ? `<p>Todavía no hubo sincronizaciones.</p>` : `<div style="overflow-x:auto; min-width:0; max-width:100%"><table class="hist num"><thead><tr><th>Fecha</th><th>Origen</th><th>Filas</th><th>Actualizados</th><th>Nuevos</th><th>Sin cambios</th><th>Salteados</th></tr></thead><tbody>${list.map(x => `<tr><td>${f(x.creado_en)}</td><td>${x.origen === "plex" ? "Plex" : "Planilla"}</td><td>${x.filas}</td><td>${x.actualizados}</td><td>${x.creados}</td><td>${x.sin_cambios}</td><td>${x.ignorados}</td></tr>`).join("")}</tbody></table></div>`;
+  }, e => { const box = $("#syncHist"); if (box) box.innerHTML = `<p class="err">${esc(errMsg(e))}</p>`; });
   let parsed = null;
   const prev = () => {
     const t = $("#csvText").value, box = $("#csvPrev");
@@ -658,6 +678,14 @@ function viewImport(){
       <button class="btn btn-pink" id="doImport" ${parsed.out.length ? "" : "disabled"} style="justify-self:start">Importar ${parsed.out.length} productos</button>`;
     $("#doImport").onclick = async e => {
       const btn = e.currentTarget; btn.disabled = true; $("#prog").hidden = false; let ok = 0, fail = 0;
+      if (S.neon){
+        btn.textContent = `Importando ${parsed.out.length} productos…`; $("#prog i").style.width = "60%";
+        const filas = parsed.out.map(r => ({ ...r.data, precioAnterior: parsed.idx.precioAnterior != null ? r.data.precioAnterior : undefined, stock: r.data.stock ?? undefined }));
+        try { const r = await PuraDatos.sincronizar(filas, "completo"); $("#prog i").style.width = "100%";
+          btn.textContent = `Listo: ${r.creados} nuevos, ${r.actualizados} actualizados${r.sin_cambios ? `, ${r.sin_cambios} sin cambios` : ""}${r.ignorados ? `, ${r.ignorados} salteados` : ""}`; toast(`${r.creados + r.actualizados} productos importados`); }
+        catch (err) { btn.disabled = false; btn.textContent = "Reintentar la importación"; toast(errMsg(err)); }
+        return;
+      }
       for (const [i, r] of parsed.out.entries()){
         const old = byId(r.id);
         const data = { ...(old ? Object.fromEntries(Object.entries(old).filter(([k]) => k !== "id")) : {}), ...r.data,
@@ -682,6 +710,38 @@ function viewImport(){
   };
 }
 
+/* ---------- Cuenta (solo con la base propia en Neon) ---------- */
+function viewCuenta(){
+  const a = S.admin || {};
+  $("#main").innerHTML = `<div class="head"><div><h1>Cuenta</h1><p>Ingresaste como <b>${esc(a.email)}</b>.</p></div><button class="btn btn-ghost" id="salir" style="box-shadow:inset 0 0 0 1.5px var(--line)">Cerrar sesión</button></div>
+    <section class="panel"><h2>Cambiar contraseña</h2>
+      <form id="fClave" class="row2" style="display:grid; gap:12px">
+        <div class="field"><label for="cAct">Contraseña actual</label><input id="cAct" type="password" autocomplete="current-password" required></div>
+        <div class="field"><label for="cNue">Contraseña nueva</label><input id="cNue" type="password" autocomplete="new-password" minlength="10" required></div>
+        <p class="err" id="cErr" hidden></p>
+        <button class="btn btn-ink" style="justify-self:start">Guardar contraseña</button></form></section>
+    <section class="panel"><h2>Administradores</h2><p>Las personas de esta lista pueden entrar al backoffice y cambiar la tienda.</p>
+      <ul class="admins" id="aList" style="padding:0; margin:0"><li>Cargando…</li></ul>
+      <form id="fAdmin" style="display:grid; gap:12px">
+        <div class="row2" style="display:grid; gap:12px"><div class="field"><label for="aMail">Email</label><input id="aMail" type="email" required></div>
+        <div class="field"><label for="aNom">Nombre</label><input id="aNom"></div></div>
+        <div class="field"><label for="aClave">Contraseña inicial (mínimo 10 caracteres)</label><input id="aClave" type="text" minlength="10" autocomplete="off" required></div>
+        <p class="err" id="aErr" hidden></p>
+        <button class="btn btn-ink" style="justify-self:start">Agregar administrador</button></form></section>`;
+  $("#salir").onclick = async () => { await PuraDatos.salir(); location.reload(); };
+  $("#fClave").onsubmit = async e => { e.preventDefault(); const err = $("#cErr"); err.hidden = true;
+    try { await PuraDatos.cambiarClave($("#cAct").value, $("#cNue").value); e.target.reset(); toast("Contraseña cambiada"); }
+    catch (x) { err.textContent = errMsg(x); err.hidden = false; } };
+  const cargar = () => PuraDatos.admins().then(list => { $("#aList").innerHTML = list.map(x => `<li><span><b>${esc(x.nombre || x.email)}</b><br><small>${esc(x.email)}${x.ultimo_ingreso ? " · último ingreso " + new Date(x.ultimo_ingreso).toLocaleDateString("es-AR") : " · todavía no ingresó"}</small></span>${x.email === a.email ? `<small>Vos</small>` : `<button class="btn btn-ghost btn-sm" data-quitar="${esc(x.id)}">Quitar</button>`}</li>`).join("");
+    $("#aList").querySelectorAll("[data-quitar]").forEach(b => b.onclick = async () => {
+      if (b.dataset.arm !== "1"){ b.dataset.arm = "1"; b.textContent = "Confirmar"; return; }
+      try { await PuraDatos.quitarAdmin(b.dataset.quitar); toast("Acceso quitado"); cargar(); } catch (x) { toast(errMsg(x)); } }); }, x => toast(errMsg(x)));
+  cargar();
+  $("#fAdmin").onsubmit = async e => { e.preventDefault(); const err = $("#aErr"); err.hidden = true;
+    try { await PuraDatos.crearAdmin($("#aMail").value, $("#aNom").value, $("#aClave").value); e.target.reset(); toast("Administrador agregado"); cargar(); }
+    catch (x) { err.textContent = errMsg(x); err.hidden = false; } };
+}
+
 /* ---------- Arranque ---------- */
 function deny(msg){ $("#gateBox").innerHTML = `<h1>Acceso solo para administradores</h1><p>${msg}</p><a class="btn btn-ink" href="index.html">Ir a la tienda</a>`; }
 
@@ -696,14 +756,40 @@ function live(db, path, onData, onFail){
   start();
   setTimeout(() => { if (!got) once(); }, 5000);
 }
+/* Fuera de claude.ai: ingreso con email y contraseña contra la base propia */
+function showLogin(){
+  $("#gateBox").innerHTML = `<h1>Backoffice de Purafarma</h1><p>Ingresá con tu email y contraseña de administrador.</p>
+    <form id="fLogin" novalidate>
+      <div class="field"><label for="lMail">Email</label><input id="lMail" type="email" autocomplete="username" required></div>
+      <div class="field"><label for="lClave">Contraseña</label><input id="lClave" type="password" autocomplete="current-password" required></div>
+      <p class="err" id="lErr" hidden></p>
+      <button class="btn btn-pink">Ingresar</button></form>`;
+  $("#lMail").focus();
+  $("#fLogin").onsubmit = async e => { e.preventDefault(); const err = $("#lErr"), btn = e.target.querySelector("button"); err.hidden = true; btn.disabled = true; btn.textContent = "Ingresando…";
+    try { S.admin = await PuraDatos.ingresar($("#lMail").value.trim(), $("#lClave").value); startNeon(); }
+    catch (x) { err.textContent = x.message; err.hidden = false; btn.disabled = false; btn.textContent = "Ingresar"; } };
+}
+function startNeon(){
+  S.neon = true; $("#navCuenta").hidden = false;
+  S.assets = { upload: async blob => ({ id: (await PuraDatos.subirFoto(blob)).id }) };
+  start(PuraDatos.db(20));
+}
 (async () => {
   const use = window.claude && window.claude.use ? window.claude.use.bind(window.claude) : null;
-  if (!use) return deny("Abrí el backoffice desde claude.ai con la cuenta de Purafarma.");
+  if (!use){
+    if (!window.PuraDatos || !PuraDatos.activa) return deny("Abrí el backoffice desde claude.ai con la cuenta de Purafarma.");
+    if (PuraDatos.token()){ try { S.admin = await PuraDatos.yo(); } catch (e) { if (e.code === "unavailable") return deny("No hay conexión con la base de la tienda. Probá de nuevo en unos minutos."); } }
+    return S.admin ? startNeon() : showLogin();
+  }
   const [db, user, assets, downloads] = await Promise.all([use("db"), use("user"), use("assets"), use("downloads")].map(p => Promise.resolve(p).catch(() => null)));
   S.downloads = downloads;
   let can = false; try { can = user ? !!(await user.canEdit()) : false; } catch (e) {}
   if (!db || !can) return deny("Tu usuario no tiene permiso para administrar la tienda. Si sos parte del equipo, pedile al dueño que te comparta la tienda como Editor.");
-  S.db = db; S.assets = assets;
+  S.assets = assets;
+  start(db);
+})();
+function start(db){
+  S.db = db;
   $("#gate").hidden = true; $("#app").hidden = false; render();
   live(db, "productos", snap => {
     S.products = snap.docs.map(d => ({ id:d.id, ...d.data() })).map(p => ({ ...p, precio:Number(p.precio)||0, precioAnterior:Number(p.precioAnterior)||0 }));
@@ -719,7 +805,7 @@ function live(db, path, onData, onFail){
     S.banners = snap.docs.map(d => ({ id:d.id, ...d.data() })); $("#nB").textContent = S.banners.length || "";
     if (S.view === "banners" && !$("#drawer").classList.contains("open")) viewBanners();
   }, e => toast(errMsg(e)));
-})();
+}
 })();
 </script>
 </body>
