@@ -67,13 +67,13 @@ body.sport-on header.top{background:color-mix(in srgb, var(--night) 88%, transpa
 @keyframes bump{40%{transform:scale(1.35)}}
 
 /* 1 · Escena inicial */
-.hero{height:320vh; background:var(--night); color:var(--cream)}
+.hero{height:200vh; background:var(--night); color:var(--cream)}
 .hero .stage{display:flex; align-items:center; justify-content:center}
 .grid-bg{position:absolute; inset:-20%; background-image:linear-gradient(rgba(245,241,235,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(245,241,235,.06) 1px, transparent 1px); background-size:64px 64px; transform:perspective(900px) rotateX(calc(58deg - var(--p,0) * 40deg)) translateY(calc(var(--p,0) * -120px)); transform-origin:50% 100%; mask-image:radial-gradient(ellipse at 50% 60%, #000 30%, transparent 70%); -webkit-mask-image:radial-gradient(ellipse at 50% 60%, #000 30%, transparent 70%)}
 .glow{position:absolute; width:70vmax; height:70vmax; left:calc(var(--mx,50) * 1%); top:calc(var(--my,45) * 1%); transform:translate(-50%,-50%); border-radius:50%; background:radial-gradient(circle, rgba(226,62,126,.42), rgba(204,42,105,.12) 40%, transparent 65%); pointer-events:none; transition:left 600ms var(--ease), top 600ms var(--ease)}
 .hero-copy{position:relative; z-index:3; text-align:center; padding:0 24px; max-width:1100px; display:flex; flex-direction:column; align-items:center; gap:26px}
 .hero-copy .kick{font-size:13px; font-weight:600; letter-spacing:.24em; text-transform:uppercase; color:var(--dim)}
-.hero h1{margin:0; font-size:clamp(46px, 8.4vw, 128px); line-height:.92; font-weight:700; letter-spacing:-.045em}
+.hero h1{margin:0; font-size:clamp(56px, 9.6vw, 148px); line-height:.9; font-weight:700; letter-spacing:-.045em}
 .hero h1 .w{display:inline-block; opacity:.08; transform:translateY(.18em); transition:opacity 500ms var(--ease), transform 600ms var(--ease), color 500ms ease}
 .hero h1 .w.on{opacity:1; transform:none}
 .hero h1 .w.hl.on{color:var(--pink-hi)}
@@ -248,35 +248,73 @@ footer .wrap{padding-top:72px; padding-bottom:32px; display:flex; flex-direction
 .mega span:nth-child(5){color:var(--pink-hi)}
 footer .legal{margin:0; font-size:12px; color:var(--dim); border-top:1px solid #2A2622; padding-top:20px}
 
-/* Teléfonos: escenas más cortas y categorías con deslizamiento nativo */
+/* Teléfonos: encabezado en una fila, escena inicial propia y categorías con deslizamiento nativo */
+.swipe{display:none}
 @media (max-width:760px){
-  header.top .wrap{flex-wrap:wrap; column-gap:12px; padding-top:12px; padding-bottom:12px}
-  .logo b{font-size:20px}
-  .nav{order:3; flex-basis:100%}
-  .tools{margin-left:auto}
+  header.top .wrap{padding-top:10px; padding-bottom:10px; gap:10px}
+  .logo b{font-size:19px} .logo span{font-size:7px}
+  .nav{display:none}
+  .tools{margin-left:auto; gap:8px}
+  .icon-btn{width:42px; height:42px}
+  .cart-btn{height:42px; padding:0 14px}
   .cart-btn .lbl{display:none}
-  .hero{height:260vh}
-  .search .btn{flex:1 1 100%}
-  .stat{display:none}
-  .steps{height:auto} .steps .stage{position:static; height:auto; padding:96px 0}
+  .hero{height:150vh}
+  .hero .stage{align-items:flex-end; padding-bottom:max(28px, 4vh)}
+  .hero-copy{gap:16px; padding:0 20px}
+  .hero-copy .kick{font-size:11px; letter-spacing:.18em}
+  .hero h1{font-size:clamp(50px, 15vw, 72px)}
+  .hero .lead{font-size:15px}
+  .search{gap:8px}
+  .search input{height:54px; font-size:16px}
+  .search .btn{flex:1 1 100%; height:52px}
+  .chips{gap:6px}
+  .chip{font-size:12.5px; padding:7px 12px}
+  .chips .chip:nth-child(n+4){display:none}
+  .orbit .it{width:120px; height:190px; margin-left:-60px; margin-top:-95px}
+  .glow{width:120vmax; height:120vmax}
+  .stat,.hint{display:none}
+  .h2{font-size:clamp(32px, 9vw, 40px)}
+  .cats{height:auto!important} .cats .stage{position:static; height:auto; padding:80px 0 72px; gap:20px}
+  .cats-head{align-items:flex-start; flex-direction:column; gap:8px}
+  .swipe{display:inline-flex; align-items:center; gap:6px; font-size:13px; font-weight:600; color:var(--muted)}
+  .rail{overflow-x:auto; scroll-snap-type:x mandatory; scroll-padding-left:24px; padding-right:24px; transform:none!important; scrollbar-width:none; -webkit-overflow-scrolling:touch}
+  .rail::-webkit-scrollbar{display:none}
+  .panel{width:80vw; height:430px; padding:26px; scroll-snap-align:start}
+  .panel h3{font-size:clamp(26px, 7.4vw, 34px)}
+  .panel p{display:none}
+  .panel .art{width:40%; height:44%; bottom:6%}
+  .cats-bar{display:none}
+  .picks{padding:72px 0}
+  .picks-head{margin-bottom:24px}
+  .cards{grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px}
+  .card{border-radius:18px}
+  .card .ph{height:160px; padding:14px}
+  .card .bd{padding:12px 12px 14px}
+  .card .br{font-size:10px; letter-spacing:.1em}
+  .card .nm{font-size:13px}
+  .card .pr b{font-size:16px}
+  .card .btn{padding:0 8px; font-size:12.5px; min-height:42px}
+  .rx{padding:72px 0}
+  .rx-box{border-radius:26px; gap:28px}
+  .rx-card{padding:20px}
+  .opts{grid-template-columns:repeat(2, minmax(0,1fr))}
+  .rx-line{grid-template-columns:48px minmax(0,1fr)}
+  .rx-line .pr{grid-column:2}
+  .sport{height:170vh}
+  .sport .wrap{gap:28px}
+  .sport-mark b{font-size:34px}
+  .sport-grid .ph{height:130px}
+  .sport-grid a{padding:18px 12px}
+  .brands{padding:72px 0 24px}
+  .tape{gap:36px}
+  .help{padding:24px 0 72px}
+  .help-main,.help-side{border-radius:26px}
+  .steps{height:auto} .steps .stage{position:static; height:auto; padding:72px 0}
   .steps .wrap{grid-template-columns:1fr; gap:24px}
   .big-n{display:none}
   .step{opacity:1}
-  .cats{height:auto!important} .cats .stage{position:static; height:auto; padding:96px 0}
-  .rail{overflow-x:auto; scroll-snap-type:x mandatory; padding-right:24px; transform:none!important; scrollbar-width:none}
-  .rail::-webkit-scrollbar{display:none}
-  .panel{width:82vw; height:440px; scroll-snap-align:start}
-  .cats-bar{display:none}
-  .sport{height:200vh}
-  .cards{grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px}
-  .card .ph{height:170px; padding:16px}
-  .card .bd{padding:14px}
-  .card .nm{font-size:13.5px}
-  .card .pr b{font-size:17px}
-  .card .btn{padding:0 10px; font-size:13px}
-  .picks{padding:88px 0}
-  .rx-line{grid-template-columns:48px minmax(0,1fr)}
-  .rx-line .pr{grid-column:2}
+  .step.on i,.step i{background:var(--pink)}
+  footer .wrap{padding-top:56px}
 }
 /* Sin movimiento: todo quieto y visible */
 @media (prefers-reduced-motion:reduce){
@@ -325,8 +363,8 @@ footer .legal{margin:0; font-size:12px; color:var(--dim); border-top:1px solid #
       <div class="glow" aria-hidden="true"></div>
       <div class="orbit" id="orbit" aria-hidden="true"></div>
       <div class="hero-copy">
-        <p class="kick">Purafarma · Mar del Plata</p>
-        <h1 id="heroT"><span class="w">Tu</span> <span class="w">farmacia,</span><br><span class="w hl">a</span> <span class="w hl">un</span> <span class="w hl">toque.</span></h1>
+        <p class="kick">Farmacias y perfumerías · Mar del Plata</p>
+        <h1 id="heroT"><span class="w">Viví</span><br><span class="w hl">Purafarma.</span></h1>
         <p class="lead">Dermocosmética, perfumes, nutrición deportiva y todo para tu bebé. Armá tu pedido y lo retirás en la farmacia o te lo llevamos.</p>
         <form class="search" id="searchForm" role="search">
           <label class="sr" for="buscar">Buscar productos</label>
@@ -349,26 +387,10 @@ footer .legal{margin:0; font-size:12px; color:var(--dim); border-top:1px solid #
     </div>
   </section>
 
-  <!-- 2 · Cómo comprar -->
-  <section class="pin steps" id="steps" aria-labelledby="stepsT">
-    <div class="stage">
-      <div class="wrap">
-        <div class="big-n num" aria-hidden="true"><span class="on">01</span><span>02</span><span>03</span></div>
-        <div class="step-list">
-          <p class="eyebrow" id="stepsT">Cómo comprar</p>
-          <div class="step on"><i><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></i><h3>Buscás y armás tu pedido</h3><p>Más de lo que entra en una vidriera, con precio y stock de la farmacia.</p></div>
-          <div class="step"><i><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10 12 4l9 6v10H3z"/><path d="M9 20v-6h6v6"/></svg></i><h3>Elegís retiro o envío</h3><p>Lo retirás en la farmacia o te lo llevamos a tu casa.</p></div>
-          <div class="step"><i><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-5A8 8 0 1 1 21 12z"/></svg></i><h3>Te confirmamos por WhatsApp</h3><p>Nuestro equipo de farmacia te escribe para confirmar el pedido y responder tus dudas.</p></div>
-          <div class="track" aria-hidden="true"><i></i></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
   <!-- 3 · Categorías -->
   <section class="pin cats" id="cats" aria-labelledby="catsT">
     <div class="stage">
-      <div class="wrap cats-head"><h2 class="h2" id="catsT">¿Qué necesitás hoy?</h2><a class="more" href="tienda.html">Ver todo el catálogo</a></div>
+      <div class="wrap cats-head"><h2 class="h2" id="catsT">¿Qué necesitás hoy?</h2><span class="swipe" aria-hidden="true">Deslizá para ver más →</span><a class="more" href="tienda.html">Ver todo el catálogo</a></div>
       <div class="rail" id="rail"></div>
       <div class="wrap"><div class="cats-bar" aria-hidden="true"><i></i></div></div>
     </div>
@@ -427,6 +449,21 @@ footer .legal{margin:0; font-size:12px; color:var(--dim); border-top:1px solid #
         <div class="row" id="helpRow"><a class="btn btn-white" href="https://www.instagram.com/purafarma.ok/" target="_blank" rel="noopener">Instagram @purafarma.ok</a></div>
       </div>
       <div class="help-side reveal" id="visit" hidden><h3>Visitanos</h3><p id="visitDir"></p><p id="visitHs"></p></div>
+    </div>
+  </section>
+  <!-- 9 · Cómo comprar (al final) -->
+  <section class="pin steps" id="steps" aria-labelledby="stepsT">
+    <div class="stage">
+      <div class="wrap">
+        <div class="big-n num" aria-hidden="true"><span class="on">01</span><span>02</span><span>03</span></div>
+        <div class="step-list">
+          <p class="eyebrow" id="stepsT">Cómo comprar</p>
+          <div class="step on"><i><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg></i><h3>Buscás y armás tu pedido</h3><p>Más de lo que entra en una vidriera, con precio y stock de la farmacia.</p></div>
+          <div class="step"><i><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10 12 4l9 6v10H3z"/><path d="M9 20v-6h6v6"/></svg></i><h3>Elegís retiro o envío</h3><p>Lo retirás en la farmacia o te lo llevamos a tu casa.</p></div>
+          <div class="step"><i><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-5A8 8 0 1 1 21 12z"/></svg></i><h3>Te confirmamos por WhatsApp</h3><p>Nuestro equipo de farmacia te escribe para confirmar el pedido y responder tus dudas.</p></div>
+          <div class="track" aria-hidden="true"><i></i></div>
+        </div>
+      </div>
     </div>
   </section>
 </main>
@@ -512,8 +549,9 @@ function renderOrbit(){
   orbitEls = $$("#orbit .it"); update();
 }
 function placeOrbit(p, t){
+  if (phone()) return placeOrbitPhone(p, t);
   const w = innerWidth, h = innerHeight, R = Math.min(w, h * 1.4) * .46;
-  const k = ease(clamp((p - .05) / .7, 0, 1));      // 0 = órbita, 1 = fila
+  const k = ease(clamp((p - .02) / .5, 0, 1));      // 0 = órbita, 1 = fila
   const n = orbitEls.length, gap = Math.min(w / (n + 1), 180);
   orbitEls.forEach((el, i) => {
     const o = ORBIT[i], ang = (o.a + t * 6 + p * 90) * Math.PI / 180;
@@ -525,6 +563,21 @@ function placeOrbit(p, t){
     el.style.transform = `translate(${x}px, ${y}px) rotate(${rot}deg) scale(${s})`;
     el.style.opacity = phone() && k > .6 ? 1 - (k - .6) * 2.5 : 1;
     el.style.zIndex = Math.round(oy) + 1000;
+  });
+}
+
+/* En el teléfono los productos flotan en una franja arriba del titular y se van hacia arriba al bajar */
+function placeOrbitPhone(p, t){
+  const w = innerWidth, h = innerHeight, n = orbitEls.length, k = ease(clamp((p - .12) / .6, 0, 1));
+  orbitEls.forEach((el, i) => {
+    const col = (i - (n - 1) / 2) / ((n - 1) / 2);          // -1 … 1
+    const x = col * w * .4, base = -h * .3 + Math.abs(col) * 34;
+    const bob = Math.sin(t * 1.4 + i * 1.3) * 7;
+    const y = base + bob - k * h * .35;
+    const rot = col * 12 + Math.sin(t + i) * 3;
+    el.style.transform = `translate(${x}px, ${y}px) rotate(${rot}deg) scale(${.5 + (i % 2) * .08})`;
+    el.style.opacity = 1 - k;
+    el.style.zIndex = 10 + (i % 2);
   });
 }
 
@@ -660,13 +713,13 @@ function update(){
   const hero = E.hero, hp = prog(hero), t = (performance.now() - t0) / 1000;
   hero.style.setProperty("--p", hp.toFixed(4));
   // titular palabra por palabra, luego buscador
-  E.words.forEach((w, i) => w.classList.toggle("on", reduce || hp >= i * .07));
-  hero.classList.toggle("show-search", reduce || hp > .42);
+  E.words.forEach((w, i) => w.classList.toggle("on", reduce || hp >= i * .06));
+  hero.classList.toggle("show-search", reduce || hp > .22);
   hero.classList.toggle("scrolled", hp > .03);
   if (!reduce) placeOrbit(hp, t);
   // contador de productos
   const target = S.products.length;
-  if (hp > .42 && target && countShown !== target){ countShown = target; countUp(target); }
+  if (hp > .22 && target && countShown !== target){ countShown = target; countUp(target); }
   // encabezado
   const heroEnd = hero.getBoundingClientRect().bottom;
   const sr = E.sport.getBoundingClientRect();
