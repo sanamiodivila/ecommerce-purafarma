@@ -1,0 +1,41 @@
+[
+  {
+    "id": "ej-b1",
+    "activo": true,
+    "bajada": "Protectores solares faciales y corporales.",
+    "categoria": "",
+    "color": "#E23E7E",
+    "cta": "Ver La Roche-Posay",
+    "ejemplo": true,
+    "imagenId": null,
+    "marca": "La Roche-Posay",
+    "orden": 1,
+    "titulo": "Protección solar para toda la familia"
+  },
+  {
+    "id": "ej-b2",
+    "activo": true,
+    "bajada": "Proteínas, creatina y suplementos.",
+    "categoria": "nutricion-deportiva",
+    "color": "#121110",
+    "cta": "Ver nutrición",
+    "ejemplo": true,
+    "imagenId": null,
+    "marca": "",
+    "orden": 2,
+    "titulo": "Nutrición deportiva para entrenar mejor"
+  },
+  {
+    "id": "ej-b3",
+    "activo": true,
+    "bajada": "Limpiadores y cremas con ceramidas.",
+    "categoria": "",
+    "color": "#E9DCCB",
+    "cta": "Ver CeraVe",
+    "ejemplo": true,
+    "imagenId": null,
+    "marca": "CeraVe",
+    "orden": 3,
+    "titulo": "Tu rutina de hidratación"
+  }
+]

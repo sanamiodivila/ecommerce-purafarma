@@ -1,0 +1,806 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Purafarma, farmacias y perfumerías de Mar del Plata: dermocosmética, perfumería, nutrición deportiva y maternidad, ahora online.">
+<style>:root{color-scheme:light; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px)} body{margin:0} img{max-width:100%} [hidden]{display:none!important}</style>
+<title>Purafarma Tienda Online</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@1,800&family=Poppins:wght@300;400;500;600;700;800&display=swap">
+<style>
+/* Idea: la vidriera de Purafarma. El toldo rayado de sus campañas sube con el scroll y abre el local; la receta del farmacéutico arma tu rutina con el catálogo real. Un solo look de marca, a propósito (crema, negro, rosa). */
+:root{
+  --cream:#F5F1EB; --paper:#FFFCF7; --sand:#E9DCCB; --ink:#121110; --muted:#5A534B;
+  --pink:#E23E7E; --pink-deep:#CC2A69; --blush:#F7D3E0; --white:#FFFFFF;
+  --font:"Poppins", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --s-display:clamp(44px, 7vw, 112px); --s-h2:clamp(32px, 4.4vw, 64px); --s-lead:clamp(19px, 1.6vw, 22px); --s-body:17px; --s-small:14px;
+  --ease-out:cubic-bezier(.23,1,.32,1); --ease-io:cubic-bezier(.77,0,.175,1);
+  --gutL:max(20px, env(safe-area-inset-left,0px)); --gutR:max(20px, env(safe-area-inset-right,0px));
+  color-scheme:light;
+}
+/* Modo Purafarma Sport: se activa al tocar nutrición deportiva */
+:root[data-sport]{
+  --cream:#0B0B0B; --paper:#161616; --sand:#1D1D1D; --ink:#FFFFFF; --muted:#B4B4B4;
+  --pink:#FF5000; --pink-deep:#FF5000; --blush:#3A1B0A; --white:#0B0B0B; color-scheme:dark;
+}
+body,.hero,.show,.rx-sec,.sheet,.brands,.close-field,footer,.lk-word,.hero-lead{transition:background-color 500ms ease, color 500ms ease}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--cream); color:var(--ink); font-family:var(--font); font-size:var(--s-body); line-height:1.55; -webkit-font-smoothing:antialiased; overflow-x:clip}
+body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top,0px); z-index:90; background:var(--ink)}
+button,input{font:inherit; color:inherit}
+button{cursor:pointer; background:none; border:0; padding:0}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--pink); outline-offset:3px; border-radius:4px}
+h1,h2,h3{margin:0; text-wrap:balance; font-weight:700; letter-spacing:-.02em; line-height:1.02}
+p{margin:0}
+.wrap{max-width:1360px; margin:0 auto; padding-left:var(--gutL); padding-right:var(--gutR)}
+.num{font-variant-numeric:tabular-nums}
+.sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+.btn{display:inline-flex; align-items:center; justify-content:center; gap:10px; height:56px; padding:0 30px; border-radius:999px; font-weight:600; font-size:16px; text-decoration:none; transition:transform 160ms var(--ease-out), background-color 200ms ease, color 200ms ease}
+.btn:active{transform:scale(.97)}
+.btn svg{width:18px; height:18px; transition:transform 220ms var(--ease-out)}
+@media (hover:hover) and (pointer:fine){ .btn:hover svg{transform:translateX(4px)} }
+.btn-ink{background:var(--ink); color:var(--cream)}
+.btn-pink{background:var(--pink-deep); color:var(--white)}
+@media (hover:hover) and (pointer:fine){ .btn-pink:hover{background:var(--ink)} .btn-ink:hover{background:var(--pink-deep); color:var(--white)} }
+.btn-light{background:var(--cream); color:var(--ink)}
+
+/* Barra fija que aparece después del toldo */
+.bar{position:fixed; top:env(safe-area-inset-top,0px); left:0; right:0; z-index:80; background:#121110; color:#F5F1EB; transform:translateY(-110%); transition:transform 360ms var(--ease-out), background-color 500ms ease}
+:root[data-sport] .bar{background:#0B0B0B}
+.bar.on{transform:none}
+.bar-in{display:flex; align-items:center; justify-content:space-between; gap:16px; height:64px}
+.mark{display:inline-flex; flex-direction:column; line-height:1; text-decoration:none}
+.mark b{font-weight:600; font-size:20px; letter-spacing:.09em}
+.mark .msub{display:flex; align-items:center; gap:6px; font-size:7.5px; font-weight:600; letter-spacing:.16em; margin-top:5px; white-space:nowrap; transition:color 400ms ease}
+.mark .msub::before,.mark .msub::after{content:""; flex:1; height:1.5px; background:currentColor; min-width:8px}
+.mark .msub .s{display:none; font-family:"Exo 2", var(--font); font-style:italic; font-weight:800; font-size:13px; letter-spacing:.06em; line-height:.8}
+.bar.sport .mark .msub, :root[data-sport] .mark .msub{color:#FF5000}
+.bar.sport .mark .msub .n, :root[data-sport] .mark .msub .n{display:none}
+.bar.sport .mark .msub .s, :root[data-sport] .mark .msub .s{display:inline}
+.bar.sport .cartpill{background:#FF5000!important; color:#0B0B0B!important}
+.bar nav{display:flex; align-items:center; gap:22px; font-size:15px; font-weight:500}
+.bar nav a{text-decoration:none; opacity:.85}
+.bar nav a:hover{opacity:1}
+.cartpill{display:inline-flex; align-items:center; gap:8px; height:40px; padding:0 16px; border-radius:999px; background:var(--pink-deep); color:var(--white)!important; opacity:1!important; font-weight:600; text-decoration:none; transition:transform 160ms var(--ease-out)}
+.cartpill:active{transform:scale(.96)}
+.cartpill svg{width:18px; height:18px}
+.cartpill.bump{animation:bump 380ms var(--ease-out)}
+@keyframes bump{40%{transform:scale(1.12)}}
+
+/* HERO: vidriera con toldo, logo centrado y estante de categorías */
+.hero{position:relative; min-height:100svh; display:grid; grid-template-rows:auto 1fr auto; background:var(--cream); overflow:hidden}
+.valance{--sw:clamp(34px, 4.4vw, 64px); position:relative; z-index:2; height:clamp(56px, 10vh, 110px); transform-origin:50% 0; animation:sway 5s ease-in-out infinite alternate;
+  background:repeating-linear-gradient(90deg, var(--ink) 0 var(--sw), var(--cream) var(--sw) calc(var(--sw) * 2)); transition:background 500ms ease}
+.valance::after{content:""; position:absolute; left:0; right:0; top:calc(100% - 1px); height:calc(var(--sw) / 2);
+  background:repeating-linear-gradient(90deg, var(--ink) 0 var(--sw), var(--cream) var(--sw) calc(var(--sw) * 2));
+  -webkit-mask:radial-gradient(circle calc(var(--sw) / 2) at 50% 0, #000 97%, transparent 100%) 0 0 / var(--sw) calc(var(--sw) / 2) repeat-x;
+          mask:radial-gradient(circle calc(var(--sw) / 2) at 50% 0, #000 97%, transparent 100%) 0 0 / var(--sw) calc(var(--sw) / 2) repeat-x}
+@keyframes sway{from{transform:scaleY(1)} to{transform:scaleY(1.07)}}
+.hero-in{display:grid; justify-items:center; align-content:center; text-align:center; gap:clamp(18px, 2.6vw, 30px); padding-block:clamp(64px, 9vh, 112px) clamp(32px, 5vh, 56px)}
+.lockup{display:inline-grid; justify-items:stretch; font-weight:600; line-height:1; letter-spacing:0; margin:0}
+.lk-word{display:block; font-size:clamp(50px, 11.2vw, 172px); letter-spacing:.07em; margin-right:-.07em; line-height:.86; color:var(--ink)}
+.lk-sub{display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:.9em; font-size:clamp(11px, 1.5vw, 22px); margin-top:.85em; color:var(--ink); transition:color 500ms ease}
+.lk-sub::before,.lk-sub::after{content:""; height:max(2px, .12em); background:currentColor}
+.lk-swap{display:grid; place-items:center}
+.lk-swap > span{grid-area:1/1; transition:opacity 320ms ease, transform 420ms var(--ease-out), filter 320ms ease}
+.lk-norm{letter-spacing:.2em; margin-right:-.2em; white-space:nowrap}
+.lk-sport{font-family:"Exo 2", var(--font); font-style:italic; font-weight:800; font-size:2.5em; letter-spacing:.06em; line-height:1; color:var(--pink-deep); opacity:0; transform:translateY(.25em) skewX(-8deg); filter:blur(4px)}
+:root[data-sport] .lk-sub{color:var(--pink-deep)}
+:root[data-sport] .lk-norm{opacity:0; transform:translateY(-.4em); filter:blur(4px)}
+:root[data-sport] .lk-sport{opacity:1; transform:none; filter:none}
+.hero-lead{font-size:var(--s-lead); line-height:1.45; max-width:42ch; color:var(--muted)}
+.hero-cta{display:flex; gap:12px; flex-wrap:wrap; justify-content:center}
+.btn-ghost{background:transparent; color:var(--ink); box-shadow:inset 0 0 0 2px var(--ink)}
+@media (hover:hover) and (pointer:fine){ .btn-ghost:hover{background:var(--ink); color:var(--cream)} }
+/* Banners de fondo detrás del logo (se cargan en el backoffice, sección Portada) */
+.hero-bg{position:absolute; inset:0; z-index:0; overflow:hidden; background:var(--cream)}
+.hero > .valance{position:relative; z-index:2}
+.hero > .hero-in, .hero > .shelf{position:relative; z-index:1}
+.hb{position:absolute; inset:0; opacity:0; transition:opacity 1100ms ease}
+.hb.on{opacity:1}
+.hb img{width:100%; height:100%; object-fit:cover; transform:scale(1.03); transition:transform 9s linear}
+.hb.on img{transform:scale(1.12)}
+.hb i{position:absolute; inset:0; background:#000}
+.hero.has-bg .lk-word{color:#FFFFFF}
+.hero.has-bg .lk-sub{color:#FFFFFF}
+:root[data-sport] .hero.has-bg .lk-sub{color:#FF5000}
+.hero.has-bg .hero-lead{color:rgba(255,255,255,.9)}
+.hero.has-bg .btn-ghost{color:#FFFFFF; box-shadow:inset 0 0 0 2px #FFFFFF}
+@media (hover:hover) and (pointer:fine){ .hero.has-bg .btn-ghost:hover{background:#FFFFFF; color:#121110} }
+.hero.has-bg .lk-word, .hero.has-bg .hero-lead{text-shadow:0 2px 24px rgba(0,0,0,.25)}
+.hb-dots{position:absolute; z-index:2; right:max(20px, env(safe-area-inset-right,0px)); top:calc(clamp(56px, 10vh, 110px) + 40px); display:flex; flex-direction:column; gap:8px}
+.hb-dots button{width:10px; height:10px; border-radius:999px; background:#FFFFFF; opacity:.45; transition:opacity 200ms ease, transform 200ms var(--ease-out)}
+.hb-dots button[aria-current="true"]{opacity:1; transform:scale(1.3)}
+/* Estante */
+.shelf{position:relative}
+.shelf::after{content:""; position:absolute; left:0; right:0; bottom:0; height:68px; background:var(--ink); transition:background-color 500ms ease}
+.shelf-in{position:relative; z-index:1; display:grid; grid-template-columns:repeat(5, minmax(0,1fr)); gap:clamp(8px, 2vw, 28px); align-items:end}
+.item{display:grid; justify-items:center; text-decoration:none; color:inherit; outline-offset:-4px}
+.item .obj{height:clamp(130px, 22vh, 220px); display:flex; align-items:flex-end; justify-content:center; transition:transform 460ms var(--ease-out); transform-origin:50% 100%}
+.item .par{height:100%; display:flex; align-items:flex-end; will-change:transform}
+.item .par svg, .item .par img{height:100%; width:auto; display:block; object-fit:contain}
+.swap2{display:grid}
+.swap2 > span{grid-area:1/1; transition:opacity 300ms ease, transform 380ms var(--ease-out)}
+.swap2 .sp{opacity:0; transform:translateY(8px); pointer-events:none}
+:root[data-sport] .swap2 .nm{opacity:0; transform:translateY(-8px); pointer-events:none}
+:root[data-sport] .swap2 .sp{opacity:1; transform:none; pointer-events:auto}
+:root[data-sport] .shelf::after{background:#FF5000}
+:root[data-sport] .item .lbl{color:#0B0B0B}
+:root[data-sport] .item .tap{color:#0B0B0B}
+.item .lbl{height:68px; display:grid; align-content:center; justify-items:center; color:var(--cream); font-weight:600; font-size:15px; line-height:1.2; text-align:center; transition:color 500ms ease}
+.item .lbl small{font-size:13px; font-weight:500; opacity:.75}
+.item .tap{display:none; font-size:12.5px; color:var(--pink-deep); font-weight:600}
+.item.armed .tap{display:block}
+.item.armed small{display:none}
+@media (hover:hover) and (pointer:fine){ .item:hover .obj{transform:translateY(-16px) rotate(-3deg)} }
+.item:focus-visible .obj, .item.armed .obj{transform:translateY(-16px) rotate(-3deg)}
+.item:active .obj{transform:translateY(-8px) scale(.97)}
+
+/* Secciones */
+section{position:relative}
+.sec{padding-block:clamp(96px, 12vw, 180px)}
+.h2{font-size:var(--s-h2)}
+.lead{font-size:var(--s-lead); line-height:1.45}
+
+/* Intro: necesidades + datos */
+.intro-top{display:grid; grid-template-columns:1.25fr 1fr; gap:40px; align-items:end}
+.intro-top .lead{max-width:36ch; justify-self:end; color:var(--muted)}
+.needs{display:flex; flex-wrap:wrap; gap:12px; margin-top:56px}
+.need{display:inline-flex; align-items:center; gap:12px; height:64px; padding:0 26px 0 12px; border-radius:999px; background:var(--paper); font-size:18px; font-weight:600; text-decoration:none; transition:transform 200ms var(--ease-out), background-color 220ms ease, color 220ms ease}
+.need i{width:42px; height:42px; border-radius:999px; background:var(--blush); display:grid; place-items:center; font-style:normal; transition:background-color 220ms ease}
+.need i svg{width:22px; height:22px; color:var(--pink-deep)}
+.need:active{transform:scale(.97)}
+@media (hover:hover) and (pointer:fine){ .need:hover{background:var(--ink); color:var(--cream); transform:translateY(-3px)} .need:hover i{background:var(--pink-deep)} .need:hover i svg{color:var(--white)} }
+.factrow{display:flex; justify-content:space-between; gap:32px; flex-wrap:wrap; margin-top:clamp(72px, 9vw, 120px)}
+.fact b{display:block; font-size:clamp(34px, 4vw, 60px); font-weight:300; letter-spacing:-.03em; line-height:1}
+.fact span{display:block; font-size:var(--s-small); color:var(--muted); margin-top:8px; font-weight:500}
+
+/* Destacados: lámina cuadrada */
+.show{background:var(--ink); color:var(--cream)}
+.show-grid{display:grid; grid-template-columns:1fr 1fr; gap:clamp(32px, 5vw, 80px); align-items:stretch; min-height:min(88svh, 860px)}
+.plate{aspect-ratio:1; max-width:100%; background:var(--pink-deep); display:grid; place-items:center; position:relative; overflow:hidden; align-self:center}
+.plate .ring{position:absolute; width:84%; aspect-ratio:1; border-radius:999px; background:var(--blush); opacity:.18}
+.plate .art{position:relative; width:62%; height:72%; display:grid; place-items:center; transition:transform 520ms var(--ease-out), opacity 280ms ease}
+.plate .art img{width:100%; height:100%; object-fit:contain; filter:drop-shadow(0 30px 40px rgba(0,0,0,.25))}
+.plate .art svg{width:auto; height:100%}
+.plate .art.out{transform:translateY(24px) scale(.96); opacity:0}
+.plate .off{position:absolute; top:24px; left:24px; background:var(--cream); color:var(--ink); font-weight:700; font-size:22px; height:52px; padding:0 18px; border-radius:999px; display:flex; align-items:center}
+.show-text{display:flex; flex-direction:column; justify-content:space-between; gap:40px; padding-block:12px}
+.tabs{display:flex; gap:10px; flex-wrap:wrap}
+.tab{height:44px; padding:0 18px; border-radius:999px; background:#2A2725; color:var(--cream); font-size:15px; font-weight:500; transition:background-color 200ms ease, color 200ms ease, transform 160ms var(--ease-out)}
+.tab:active{transform:scale(.96)}
+.tab[aria-selected="true"]{background:var(--cream); color:var(--ink)}
+.show-body{display:grid; gap:18px}
+.show-body .brand{font-size:var(--s-small); font-weight:600; letter-spacing:.14em; text-transform:uppercase; color:var(--blush)}
+.show-body h3{font-size:clamp(30px, 3.4vw, 48px); line-height:1.08}
+.show-body p.d{color:#D9D1C7; max-width:44ch}
+.show-body .price{font-size:clamp(28px, 3vw, 40px); font-weight:600; letter-spacing:-.02em}
+.show-body .price s{font-size:20px; color:#A9A097; font-weight:400; margin-left:12px}
+.cells{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+.cell{height:76px; display:flex; align-items:center; justify-content:center; gap:10px; font-weight:600; font-size:17px; text-decoration:none; transition:transform 160ms var(--ease-out), background-color 200ms ease}
+.cell:active{transform:scale(.98)}
+.cell.a{background:var(--pink-deep); color:var(--white)}
+.cell.b{background:#2A2725; color:var(--cream)}
+@media (hover:hover) and (pointer:fine){ .cell.a:hover{background:#B42159} .cell.b:hover{background:#3A3633} }
+.swapin{animation:swapin 420ms var(--ease-out)}
+@keyframes swapin{from{opacity:.001; transform:translateY(10px); filter:blur(3px)}}
+
+/* Marcas */
+.brands{background:var(--pink-deep); color:var(--white); overflow:hidden; padding-block:40px}
+.brands h2{font-size:var(--s-small); font-weight:600; letter-spacing:.04em; margin-bottom:22px}
+.marquee{display:flex; gap:56px; width:max-content; animation:marq 38s linear infinite}
+.brands:hover .marquee{animation-play-state:paused}
+.marquee button{font-size:clamp(34px, 5vw, 76px); font-weight:700; letter-spacing:-.02em; text-transform:uppercase; white-space:nowrap; color:var(--white); transition:color 200ms ease}
+.marquee button:hover{color:var(--ink)}
+@keyframes marq{to{transform:translateX(-50%)}}
+
+/* Receta */
+.rx-sec{background:var(--sand)}
+.rx-grid{display:grid; grid-template-columns:1fr minmax(0, 660px); gap:clamp(32px, 5vw, 80px); align-items:start}
+.rx-side{position:sticky; top:110px; display:grid; gap:20px}
+.rx-side .lead{color:var(--muted); max-width:34ch}
+.rx-side ul{margin:0; padding:0; list-style:none; display:grid; gap:10px; font-size:16px; font-weight:500}
+.rx-side li{display:flex; gap:10px; align-items:center}
+.rx-side li::before{content:""; width:10px; height:10px; border-radius:999px; background:var(--pink-deep); flex:none}
+.sheet{background:var(--paper); padding:clamp(28px, 5vw, 64px); position:relative;
+  -webkit-mask:radial-gradient(circle 9px at 50% 0, transparent 98%, #000) 0 0/22px 51% repeat-x, radial-gradient(circle 9px at 50% 100%, transparent 98%, #000) 0 100%/22px 51% repeat-x;
+          mask:radial-gradient(circle 9px at 50% 0, transparent 98%, #000) 0 0/22px 51% repeat-x, radial-gradient(circle 9px at 50% 100%, transparent 98%, #000) 0 100%/22px 51% repeat-x}
+.sheet-head{display:flex; justify-content:space-between; align-items:flex-start; gap:16px; padding-bottom:22px; margin-bottom:28px; background:linear-gradient(var(--ink),var(--ink)) bottom/100% 3px no-repeat}
+.sheet-head .rp{font-size:clamp(30px, 4.4vw, 58px); font-weight:800; line-height:.9; color:var(--pink-deep); letter-spacing:-.02em}
+.sheet-head .who{text-align:right; font-size:var(--s-small); font-weight:500; color:var(--muted); line-height:1.5}
+.sheet-head .who b{display:block; color:var(--ink); font-size:16px; letter-spacing:.08em}
+.q{display:grid; gap:14px}
+.q + .q{margin-top:30px}
+.q h3{font-size:20px; font-weight:600; letter-spacing:-.01em}
+.opts{display:flex; flex-wrap:wrap; gap:8px}
+.opt{height:46px; padding:0 18px; border-radius:999px; background:var(--cream); font-size:15px; font-weight:500; transition:background-color 180ms ease, color 180ms ease, transform 140ms var(--ease-out)}
+.opt:active{transform:scale(.96)}
+@media (hover:hover) and (pointer:fine){ .opt:hover{background:var(--sand)} }
+.opt[aria-pressed="true"]{background:var(--ink); color:var(--cream)}
+.rx-out{margin-top:40px; display:grid; gap:4px}
+.rx-out h3{font-size:24px; margin-bottom:10px}
+.rx-line{display:grid; grid-template-columns:44px 64px 1fr auto; gap:14px; align-items:center; padding:14px 0}
+.rx-line + .rx-line{background:linear-gradient(90deg, var(--sand) 50%, transparent 50%) top/12px 2px repeat-x}
+.rx-line .step{font-size:13px; font-weight:700; color:var(--pink-deep); text-transform:uppercase; letter-spacing:.06em; writing-mode:vertical-rl; transform:rotate(180deg); justify-self:center}
+.rx-line .th{width:64px; height:64px; background:var(--cream); display:grid; place-items:center; overflow:hidden}
+.rx-line .th img{width:100%; height:100%; object-fit:contain; padding:6px}
+.rx-line .th svg{height:78%; width:auto}
+.rx-line .n{font-size:16px; font-weight:500; line-height:1.3}
+.rx-line .n small{display:block; font-size:var(--s-small); color:var(--muted); font-weight:500}
+.rx-line .pr{font-weight:600; font-size:17px}
+.rx-line.none .n{color:var(--muted)}
+.rx-total{display:flex; justify-content:space-between; align-items:baseline; padding-top:18px; margin-top:6px; background:linear-gradient(var(--ink),var(--ink)) top/100% 3px no-repeat; font-weight:600}
+.rx-total b{font-size:28px}
+.rx-actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:22px}
+.rx-note{font-size:var(--s-small); color:var(--muted); margin-top:18px}
+.sign{font-size:15px; color:var(--muted); margin-top:28px; text-align:right}
+.sign b{display:block; font-size:22px; color:var(--ink); font-weight:600; font-style:italic; letter-spacing:-.01em}
+
+/* Ofertas como tickets */
+.offers{display:flex; gap:16px; overflow-x:auto; padding:8px 0 20px; scroll-snap-type:x mandatory; scrollbar-width:thin}
+.ticket{flex:0 0 clamp(260px, 26vw, 320px); scroll-snap-align:start; background:var(--paper); display:grid; grid-template-rows:auto 1fr; text-decoration:none; transition:transform 220ms var(--ease-out);
+  -webkit-mask:radial-gradient(circle 14px at 0 118px, transparent 98%, #000), radial-gradient(circle 14px at 100% 118px, transparent 98%, #000); -webkit-mask-composite:source-in;
+          mask:radial-gradient(circle 14px at 0 118px, transparent 98%, #000), radial-gradient(circle 14px at 100% 118px, transparent 98%, #000); mask-composite:intersect}
+@media (hover:hover) and (pointer:fine){ .ticket:hover{transform:translateY(-6px)} }
+.ticket .stub{height:118px; background:var(--pink-deep); color:var(--white); display:flex; align-items:center; justify-content:space-between; padding:0 22px}
+.ticket .stub b{font-size:52px; font-weight:800; letter-spacing:-.04em; line-height:1}
+.ticket .stub span{font-size:var(--s-small); font-weight:600; text-align:right; line-height:1.3}
+.ticket .body{padding:20px 22px 22px; display:grid; gap:6px; align-content:start; background:radial-gradient(circle 3px, var(--sand) 98%, transparent) 0 0/14px 6px repeat-x}
+.ticket .body .br{font-size:13px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-top:10px}
+.ticket .body .nm{font-size:16px; font-weight:500; line-height:1.3}
+.ticket .body .pr{font-size:22px; font-weight:600}
+.ticket .body .pr s{font-size:15px; font-weight:400; color:var(--muted); margin-left:8px}
+.offers-head{display:flex; justify-content:space-between; align-items:end; gap:24px; flex-wrap:wrap; margin-bottom:40px}
+.textlink{font-weight:600; font-size:17px; text-decoration:underline; text-decoration-thickness:3px; text-underline-offset:6px; text-decoration-color:var(--pink-deep)}
+
+/* Categorías como hojas que se apilan */
+.stack-head{padding-bottom:48px}
+.sheets{position:relative}
+.cat{position:sticky; min-height:86svh; border-radius:28px 28px 0 0; display:grid; grid-template-columns:1fr 1fr; overflow:hidden}
+.cat-text{display:flex; flex-direction:column; justify-content:space-between; gap:32px; padding:22px clamp(20px, 4vw, 56px) clamp(40px, 5vw, 72px) max(var(--gutL), calc((100vw - 1360px) / 2 + 20px))}
+.cat-text h3{font-size:clamp(28px, 3vw, 44px); line-height:1.1; min-height:56px; display:flex; align-items:center}
+.cat-text .cnt{font-size:var(--s-small); font-weight:600; opacity:.9}
+.cat-text p{font-size:18px; max-width:40ch}
+.cat-list{list-style:none; margin:0; padding:0; display:grid; gap:12px; max-width:460px}
+.cat-list li{display:flex; justify-content:space-between; gap:16px; font-size:16px}
+.cat-list li span:first-child{overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.cat-list li span:last-child{font-weight:600; white-space:nowrap}
+.cat-art{display:grid; place-items:center; padding:clamp(32px, 6vw, 80px)}
+.trio{display:flex; align-items:flex-end; justify-content:center}
+.trio > *{height:min(30svh, 290px); width:auto; max-width:46%; object-fit:contain; margin:0 -14px; transition:transform 600ms var(--ease-out)}
+.trio > *:nth-child(2){height:min(38svh, 370px); position:relative; z-index:1}
+.trio > *:only-child{height:min(42svh, 400px)}
+@media (hover:hover) and (pointer:fine){ .cat:hover .trio > *:nth-child(1){transform:translateX(-10px) rotate(-4deg)} .cat:hover .trio > *:nth-child(2){transform:translateY(-12px)} .cat:hover .trio > *:nth-child(3){transform:translateX(10px) rotate(4deg)} }
+.c1{background:var(--pink-deep); color:var(--white); top:64px}
+.c2{background:var(--ink); color:var(--cream); top:136px}
+.c3{background:#0B0B0B; color:#FFFFFF; top:208px}
+.c3 .btn{background:#FF5000!important; color:#0B0B0B!important}
+.sportmark{display:inline-flex; align-items:center; gap:10px; font-family:"Exo 2", var(--font); font-style:italic; font-weight:800; color:#FF5000; font-size:18px; letter-spacing:.06em; margin-bottom:6px}
+.sportmark::before{content:"PURAFARMA"; font-family:var(--font); font-style:normal; font-weight:600; color:#FFFFFF; font-size:13px; letter-spacing:.12em}
+.c4{background:var(--paper); color:var(--ink); top:280px}
+.c5{background:var(--sand); color:var(--ink); top:352px}
+
+/* Cierre */
+.close-grid{display:grid; grid-template-columns:repeat(3, 1fr)}
+.close-grid > div{height:40svh; min-height:240px; display:grid; place-items:center}
+.close-grid svg, .close-grid img{height:72%; width:auto; max-width:80%; object-fit:contain}
+.close-field{background:var(--pink-deep); color:var(--white); min-height:44svh; display:flex; align-items:center}
+.close-in{display:grid; grid-template-columns:1.4fr 1fr; gap:40px; align-items:end; padding-block:clamp(56px, 7vw, 96px)}
+.close-in .stmt{font-size:clamp(26px, 2.6vw, 36px); font-weight:600; line-height:1.25; letter-spacing:-.015em; max-width:26ch}
+.close-in .stmt a{text-decoration:underline; text-decoration-thickness:4px; text-underline-offset:7px}
+.close-in .stmt a:hover{color:var(--ink)}
+.close-in p.sm{font-size:16px; margin-top:28px; max-width:44ch}
+.close-in .help{justify-self:end; background:var(--white); color:var(--ink); padding:24px 26px; max-width:340px; display:grid; gap:8px}
+.close-in .help b{font-size:18px}
+.close-in .help p{font-size:15px; color:var(--muted)}
+.close-in .help button{justify-self:start; font-weight:600; font-size:15px; text-decoration:underline; text-underline-offset:4px; text-decoration-thickness:2px; text-decoration-color:var(--pink-deep)}
+
+footer{background:var(--ink); color:var(--cream); overflow:hidden}
+.foot-word{font-size:min(13.2vw, 188px); font-weight:600; letter-spacing:.05em; line-height:.8; padding-top:clamp(56px, 7vw, 96px); white-space:nowrap}
+.foot-row{display:grid; grid-template-columns:1fr 1fr; gap:40px; padding-block:72px 40px}
+.foot-row .places a{display:block; font-size:clamp(24px, 2.4vw, 34px); color:var(--blush); text-decoration:none; line-height:1.4}
+.foot-row .places a:hover{color:var(--white)}
+.foot-links{display:grid; grid-template-columns:repeat(2, 1fr); gap:8px 24px; align-content:start; font-size:15px}
+.foot-links a{text-decoration:none; opacity:.8}
+.foot-links a:hover{opacity:1}
+.legal{display:flex; justify-content:space-between; gap:16px; flex-wrap:wrap; padding-bottom:calc(32px + env(safe-area-inset-bottom,0px)); font-size:13px; opacity:.6}
+
+/* Entradas con scroll (si el navegador lo soporta; si no, todo queda visible) */
+@supports (animation-timeline: view()){
+  .rise{animation:rise linear both; animation-timeline:view(); animation-range:entry 0% entry 60%}
+  .rise.d1{animation-range:entry 8% entry 68%} .rise.d2{animation-range:entry 16% entry 76%}
+  @keyframes rise{from{opacity:.001; transform:translateY(32px)}}
+}
+
+@media (max-width:900px){
+  .bar nav .hide-m{display:none}
+  .shelf-in{display:flex; overflow-x:auto; scroll-snap-type:x mandatory; gap:4px; scrollbar-width:none; padding-left:max(var(--gutL), 8px)}
+  .shelf-in::-webkit-scrollbar{display:none}
+  .item{flex:0 0 132px; scroll-snap-align:start}
+  .intro-top, .show-grid, .rx-grid, .close-in, .foot-row{grid-template-columns:1fr}
+  .intro-top .lead{justify-self:start}
+  .rx-side{position:static}
+  .cat{grid-template-columns:1fr; min-height:70svh}
+  .cat-art{order:-1; padding:40px 20px 0}
+  .trio > *{height:22svh} .trio > *:nth-child(2){height:27svh}
+  .c1{top:52px} .c2{top:104px} .c3{top:156px} .c4{top:208px} .c5{top:260px}
+  .cat-text h3{font-size:24px; min-height:48px}
+  .close-grid > div:nth-child(1){grid-column:1/-1}
+  .close-grid{grid-template-columns:1fr 1fr}
+  .close-in .help{justify-self:start}
+  .show-grid{min-height:0}
+}
+@media (max-width:560px){
+  .hero-cta{flex-direction:column; align-items:stretch; width:100%; max-width:340px}
+  .needs .need{height:56px; font-size:16px}
+  .factrow{display:grid; grid-template-columns:1fr 1fr; gap:32px 16px}
+  .rx-line{grid-template-columns:26px 52px 1fr; }
+  .rx-line .th{width:52px; height:52px}
+  .rx-line .pr{grid-column:3; font-size:16px}
+  .cells{grid-template-columns:1fr}
+  .cell{height:60px}
+  .foot-links{grid-template-columns:1fr 1fr}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .valance{animation:none}
+  .hb img, .hb.on img{transform:none; transition:none}
+  .marquee{animation:none; flex-wrap:wrap; width:auto}
+  .rise{animation:none!important}
+  *{transition-duration:1ms!important}
+}
+</style>
+
+</head>
+<body>
+<header class="bar" id="bar" aria-label="Navegación">
+  <div class="wrap bar-in">
+    <a class="mark" href="#top" aria-label="Purafarma, inicio"><b>PURAFARMA</b><span class="msub"><span class="n">FARMACIAS Y PERFUMERÍAS</span><span class="s">SPORT</span></span></a>
+    <nav>
+      <a href="#necesidades" class="hide-m">Qué necesitás</a>
+      <a href="#receta" class="hide-m">Tu rutina</a>
+      <a href="#categorias" class="hide-m">Categorías</a>
+      <a href="tienda.html" class="hide-m">Catálogo</a>
+      <a href="tienda.html#carrito" class="cartpill" id="cartPill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.2 11.1a2 2 0 0 1-2 1.9H8.2a2 2 0 0 1-2-1.9z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span class="num" id="cartN">0</span><span class="sr">productos en el carrito</span></a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <!-- HERO -->
+  <section class="hero" id="hero" aria-labelledby="h1">
+    <div class="hero-bg" id="heroBg" aria-hidden="true"></div>
+    <div class="valance" aria-hidden="true"></div>
+    <div class="wrap hero-in">
+      <h1 class="lockup" id="h1"><span class="lk-word">PURAFARMA</span><span class="lk-sub"><span class="lk-swap"><span class="lk-norm">FARMACIAS Y PERFUMERÍAS</span><span class="lk-sport" aria-hidden="true">SPORT</span></span></span></h1>
+      <p class="hero-lead swap2"><span class="nm">Tu farmacia de Mar del Plata, ahora online. Dermocosmética, perfumes, nutrición deportiva y todo para tu bebé, con el consejo de siempre.</span><span class="sp" aria-hidden="true">Proteínas, creatina y suplementos para entrenar mejor, con el respaldo y el consejo de tu farmacia.</span></p>
+      <div class="hero-cta">
+        <a class="btn btn-pink" href="tienda.html" id="heroCta"><span class="swap2"><span class="nm">Entrar al catálogo</span><span class="sp" aria-hidden="true">Ver nutrición deportiva</span></span> <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+        <a class="btn btn-ghost" href="#receta">Armá tu rutina</a>
+      </div>
+    </div>
+    <nav class="shelf" aria-label="Categorías de la vidriera"><div class="wrap shelf-in" id="shelf"></div></nav>
+  </section>
+
+  <!-- NECESIDADES -->
+  <section class="sec" id="necesidades" style="padding-top:clamp(56px,7vw,110px)" aria-labelledby="needTitle">
+    <div class="wrap">
+      <div class="intro-top">
+        <h2 class="h2 rise" id="needTitle">¿Qué necesitás hoy?</h2>
+        <p class="lead rise d1">Empezá por lo que te pasa, no por el nombre del producto. Te llevamos directo a lo que tenemos para eso.</p>
+      </div>
+      <div class="needs rise d1" id="needs"></div>
+      <div class="factrow num" id="facts"></div>
+    </div>
+  </section>
+
+  <!-- DESTACADOS -->
+  <section class="sec show" id="destacados" aria-labelledby="showTitle">
+    <div class="wrap">
+      <h2 class="h2 rise" id="showTitle" style="margin-bottom:56px">Lo que más se lleva</h2>
+      <div class="show-grid">
+        <div class="plate rise" id="plate"><div class="ring"></div><div class="art" id="plateArt"></div></div>
+        <div class="show-text">
+          <div class="tabs" role="tablist" id="tabs" aria-label="Productos destacados"></div>
+          <div class="show-body" id="showBody" role="tabpanel"></div>
+          <div class="cells" id="cells"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MARCAS -->
+  <section class="brands" aria-labelledby="brTitle">
+    <div class="wrap"><h2 id="brTitle">Las marcas que encontrás en Purafarma. Tocá una para ver sus productos.</h2></div>
+    <div class="marquee" id="marquee"></div>
+  </section>
+
+  <!-- RECETA -->
+  <section class="sec rx-sec" id="receta" aria-labelledby="rxTitle">
+    <div class="wrap rx-grid">
+      <div class="rx-side">
+        <h2 class="h2 rise" id="rxTitle">Tu receta de rutina</h2>
+        <p class="lead rise d1">Respondé tres preguntas y te armamos una rutina de limpieza, tratamiento y protección con productos que tenemos hoy en la farmacia.</p>
+        <ul class="rise d2"><li>Menos de un minuto</li><li>Productos en stock, con precio</li><li>La sumás al carrito con un toque</li></ul>
+      </div>
+      <div class="sheet rise" id="sheet">
+        <div class="sheet-head"><span class="rp">SKINCARE</span><div class="who"><b>PURAFARMA</b>Receta de cuidado de la piel<br><span id="rxDate"></span></div></div>
+        <div id="rxQs"></div>
+        <div class="rx-out" id="rxOut" aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- OFERTAS -->
+  <section class="sec" id="ofertas" aria-labelledby="offTitle" style="padding-top:clamp(72px,8vw,120px); padding-bottom:clamp(48px,6vw,96px)">
+    <div class="wrap">
+      <div class="offers-head"><h2 class="h2 rise" id="offTitle">Bajaron de precio</h2><a class="textlink" href="tienda.html" data-sort="off">Ver todas las ofertas</a></div>
+      <div class="offers" id="offers"></div>
+    </div>
+  </section>
+
+  <!-- CATEGORÍAS -->
+  <section class="sec" id="categorias" aria-labelledby="catTitle" style="padding-top:clamp(48px,6vw,96px); padding-bottom:0">
+    <div class="wrap stack-head"><h2 class="h2 rise" id="catTitle">Todo lo de tu farmacia</h2></div>
+    <div class="sheets" id="sheets"></div>
+  </section>
+
+  <!-- CIERRE -->
+  <section aria-labelledby="closeTitle">
+    <div class="close-grid" aria-hidden="true" id="closeArt"></div>
+    <div class="close-field">
+      <div class="wrap close-in" style="width:100%">
+        <div>
+          <h2 class="sr" id="closeTitle">Entrá al catálogo</h2>
+          <p class="stmt">Más de lo que entra en una vidriera, a un toque. <a href="tienda.html">Entrá al catálogo completo</a> y armá tu pedido.</p>
+          <p class="sm">Elegís retiro en la farmacia o envío a domicilio, y te confirmamos el pedido por WhatsApp.</p>
+        </div>
+        <div class="help"><b>¿Tenés una duda?</b><p>Nuestro equipo de farmacia te asesora por Instagram en @purafarma.ok.</p><button id="copyIg">Copiar usuario</button></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-word" aria-hidden="true">PURAFARMA</div>
+    <div class="foot-row">
+      <div class="places"><a href="tienda.html">Catálogo online</a><a href="#receta">Tu receta de rutina</a><a href="tienda.html#carrito">Tu carrito</a></div>
+      <div class="foot-links" id="footCats"></div>
+    </div>
+    <div class="legal"><span>© Purafarma Farmacias · Mar del Plata. La receta de rutina es una orientación cosmética y no reemplaza la consulta médica.</span><a href="#top">Volver arriba</a></div>
+  </div>
+</footer>
+
+<script src="packshot.js"></script>
+<script>
+(() => {
+const h = (location.hash || "").slice(1);
+if (h === "backoffice") { location.replace("backoffice.html"); return; }
+addEventListener("hashchange", () => { if (location.hash === "#backoffice") location.replace("backoffice.html"); });
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const money = n => "$ " + Math.round(Number(n)||0).toLocaleString("es-AR");
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ---------- Dibujos: un mismo lenguaje gráfico, colores de marca ---------- */
+const ART = {
+  serum:(a="#CC2A69",b="#121110",c="#FFFCF7") => `<svg viewBox="0 0 160 300" aria-hidden="true"><rect x="62" y="6" width="36" height="44" rx="14" fill="${b}"/><rect x="56" y="46" width="48" height="26" rx="4" fill="${b}"/><path d="M34 82c0-6 5-10 10-10h72c5 0 10 4 10 10v196c0 9-7 16-16 16H50c-9 0-16-7-16-16z" fill="${a}"/><rect x="48" y="140" width="64" height="86" rx="4" fill="${c}"/><rect x="58" y="156" width="44" height="8" rx="4" fill="${b}"/><rect x="58" y="172" width="30" height="6" rx="3" fill="${a}"/><circle cx="80" cy="204" r="9" fill="${a}"/></svg>`,
+  perfume:(a="#CC2A69",b="#121110",c="#FFFCF7") => `<svg viewBox="0 0 200 300" aria-hidden="true"><rect x="78" y="8" width="44" height="40" rx="6" fill="${b}"/><rect x="88" y="48" width="24" height="22" fill="${b}"/><rect x="24" y="70" width="152" height="220" rx="34" fill="${a}"/><rect x="44" y="92" width="22" height="170" rx="11" fill="${c}" opacity=".35"/><rect x="66" y="150" width="88" height="70" rx="4" fill="${c}"/><rect x="80" y="170" width="60" height="8" rx="4" fill="${b}"/><rect x="92" y="188" width="36" height="6" rx="3" fill="${a}"/></svg>`,
+  tub:(a="#CC2A69",b="#121110",c="#FFFCF7") => `<svg viewBox="0 0 220 300" aria-hidden="true"><rect x="30" y="20" width="160" height="50" rx="10" fill="${b}"/><path d="M22 72h176v196c0 14-11 24-24 24H46c-13 0-24-10-24-24z" fill="${a}"/><rect x="22" y="128" width="176" height="96" fill="${c}"/><rect x="44" y="150" width="96" height="14" rx="7" fill="${b}"/><rect x="44" y="176" width="132" height="8" rx="4" fill="${a}"/><rect x="44" y="194" width="70" height="8" rx="4" fill="${a}"/></svg>`,
+  baby:(a="#CC2A69",b="#121110",c="#FFFCF7") => `<svg viewBox="0 0 160 300" aria-hidden="true"><path d="M62 6h36l10 46H52z" fill="${b}"/><rect x="40" y="52" width="80" height="26" rx="8" fill="${b}"/><rect x="34" y="78" width="92" height="214" rx="40" fill="${c}"/><rect x="34" y="78" width="92" height="214" rx="40" fill="${a}" opacity=".9"/><g fill="${c}"><rect x="34" y="140" width="40" height="6" rx="3"/><rect x="34" y="172" width="28" height="6" rx="3"/><rect x="34" y="204" width="40" height="6" rx="3"/><rect x="34" y="236" width="28" height="6" rx="3"/></g><circle cx="98" cy="214" r="14" fill="${c}"/></svg>`,
+  kit:(a="#CC2A69",b="#121110",c="#FFFCF7") => `<svg viewBox="0 0 260 230" aria-hidden="true"><rect x="92" y="10" width="76" height="42" rx="12" fill="none" stroke="${b}" stroke-width="16"/><rect x="10" y="44" width="240" height="176" rx="22" fill="${a}"/><path d="M32 44h196a22 22 0 0 1 22 22v16H10V66a22 22 0 0 1 22-22z" fill="${b}" opacity=".18"/><path d="M130 96v92M84 142h92" stroke="${c}" stroke-width="30" stroke-linecap="round"/></svg>`,
+  tube:(a="#CC2A69",b="#121110",c="#FFFCF7") => `<svg viewBox="0 0 140 300" aria-hidden="true"><rect x="44" y="244" width="52" height="50" rx="6" fill="${b}"/><path d="M20 14h100l-20 230H40z" fill="${a}"/><rect x="20" y="8" width="100" height="14" rx="2" fill="${b}"/><rect x="38" y="96" width="64" height="76" rx="4" fill="${c}"/><rect x="48" y="112" width="44" height="8" rx="4" fill="${b}"/><text x="70" y="156" text-anchor="middle" font-family="Poppins, sans-serif" font-weight="800" font-size="22" fill="${a}">50+</text></svg>`,
+  pill:(a="#CC2A69",b="#121110",c="#FFFCF7") => `<svg viewBox="0 0 200 120" aria-hidden="true"><rect x="10" y="20" width="180" height="80" rx="40" fill="${c}"/><path d="M50 20h50v80H50a40 40 0 0 1 0-80z" fill="${a}"/></svg>`,
+};
+const CATS = [
+  {id:"dermocosmetica", label:"Dermocosmética", art:"serum", text:"Rutinas para cada tipo de piel: limpieza, sérums, hidratación y protección solar de las marcas que recomiendan los dermatólogos.", cls:"c1", colors:["#FFFCF7","#121110","#CC2A69"]},
+  {id:"perfumeria", label:"Perfumería", art:"perfume", text:"Fragancias para regalar o regalarte, colonias de todos los días y sets para cada fecha especial.", cls:"c2", colors:["#CC2A69","#F5F1EB","#121110"]},
+  {id:"nutricion-deportiva", label:"Nutrición deportiva", art:"tub", text:"Proteínas, creatina y suplementos para entrenar mejor, con el respaldo de una farmacia.", cls:"c3", colors:["#FF5000","#FFFFFF","#0B0B0B"], sport:true},
+  {id:"maternidad-bebe", label:"Maternidad y bebé", art:"baby", text:"Pañales, cremas, higiene y todo lo que hace falta en casa con un bebé, siempre a mano.", cls:"c4", colors:["#CC2A69","#121110","#F7D3E0"]},
+  {id:"farmacia", label:"Farmacia y cuidado personal", art:"kit", text:"Lo esencial del botiquín y del baño: primeros auxilios, termómetros, cremas, desodorantes y productos de venta libre.", cls:"c5", colors:["#CC2A69","#121110","#FFFCF7"]},
+];
+const ALL_CATS = [...CATS.map(c => ({id:c.id, label:c.id === "farmacia" ? "Farmacia" : c.label})), {id:"cuidado-personal", label:"Cuidado personal"}];
+const catArt = (id, colors) => { const c = CATS.find(x => x.id === id); const fn = ART[c ? c.art : (id === "cuidado-personal" ? "tube" : "serum")]; return colors ? fn(...colors) : fn(); };
+const productArt = p => p.imagenId ? `<img src="/_blob/${esc(p.imagenId)}" alt="${esc(p.nombre)}">` : (window.Packshot ? Packshot.svg(p) : catArt(p.categoria));
+const DEFAULT_P = {
+  "dermocosmetica":{ nombre:"Sérum facial 30 ml", marca:"Purafarma", categoria:"dermocosmetica" },
+  "perfumeria":{ nombre:"Eau de parfum 100 ml", marca:"Purafarma", categoria:"perfumeria" },
+  "nutricion-deportiva":{ nombre:"Whey Protein 2 lb", marca:"Purafarma Sport", categoria:"nutricion-deportiva" },
+  "maternidad-bebe":{ nombre:"Shampoo bebé 400 ml", marca:"Purafarma", categoria:"maternidad-bebe" },
+  "farmacia":{ nombre:"Apósitos x 20", marca:"Purafarma", categoria:"farmacia" },
+};
+/* Productos que representan a una categoría (los destacados primero) */
+function repProducts(cat, n){
+  const list = (typeof S !== "undefined" ? S.products : []).filter(p => p.categoria === cat || (cat === "farmacia" && p.categoria === "cuidado-personal"))
+    .sort((a,b) => (b.destacado?1:0) - (a.destacado?1:0) || (b.imagenId?1:0) - (a.imagenId?1:0));
+  const out = list.slice(0, n);
+  if (!out.length && DEFAULT_P[cat]) out.push(DEFAULT_P[cat]);
+  return out;
+}
+const repArt = (cat, n) => repProducts(cat, n).map(p => productArt(p)).join("");
+const off = p => p.precioAnterior > p.precio ? Math.round((1 - p.precio / p.precioAnterior) * 100) : 0;
+
+/* ---------- Navegación hacia la tienda con filtros ---------- */
+function goStore(filter){ try { sessionStorage.setItem("pf-go", JSON.stringify(filter)); } catch (e) {} location.href = "tienda.html" + (filter.cat ? "#" + filter.cat : ""); }
+document.addEventListener("click", e => {
+  const g = e.target.closest("[data-go]"); if (!g) return;
+  e.preventDefault(); goStore(JSON.parse(g.dataset.go));
+});
+document.querySelector('[data-sort="off"]').addEventListener("click", e => { e.preventDefault(); goStore({ sort:"off" }); });
+
+/* ---------- Carrito compartido con la tienda ---------- */
+const readCart = () => { try { return JSON.parse(localStorage.getItem("pf-cart") || "{}") || {}; } catch (e) { return {}; } };
+function addToCart(ids){
+  const c = readCart(); ids.forEach(id => { c[id] = (c[id] || 0) + 1; });
+  try { localStorage.setItem("pf-cart", JSON.stringify(c)); } catch (e) {}
+  updateCart(true);
+}
+function updateCart(bump){
+  const n = Object.values(readCart()).reduce((a,b) => a + b, 0);
+  $("#cartN").textContent = n;
+  if (bump){ const p = $("#cartPill"); p.classList.remove("bump"); void p.offsetWidth; p.classList.add("bump"); $("#bar").classList.add("on"); }
+}
+addEventListener("storage", e => { if (e.key === "pf-cart") updateCart(); });
+
+/* ---------- Vidriera: estante interactivo y modo Sport ---------- */
+const bar = $("#bar"), hero = $("#hero");
+const SHELF = [
+  { id:"dermocosmetica", label:"Dermocosmética", art:() => repArt("dermocosmetica", 1) },
+  { id:"perfumeria", label:"Perfumería", art:() => repArt("perfumeria", 1) },
+  { id:"nutricion-deportiva", label:"Nutrición deportiva", art:() => repArt("nutricion-deportiva", 1), sport:true },
+  { id:"maternidad-bebe", label:"Maternidad y bebé", art:() => repArt("maternidad-bebe", 1) },
+  { id:"farmacia", label:"Farmacia", art:() => repArt("farmacia", 1) },
+];
+const setSport = on => { const was = document.documentElement.hasAttribute("data-sport"); document.documentElement.toggleAttribute("data-sport", !!on); if (was !== !!on) pickHeroSet(); };
+/* Fondos de portada */
+let heroSet = [], heroIdx = 0, heroTimer = 0;
+function renderHeroBg(){
+  const list = (S.portada || []).filter(x => x.activo !== false && x.imagenId).sort((a,b) => (a.orden||0) - (b.orden||0));
+  $("#heroBg").innerHTML = list.map(x => `<div class="hb" data-id="${esc(x.id)}" data-modo="${x.modo === "sport" ? "sport" : "general"}"><img src="/_blob/${esc(x.imagenId)}" alt="" style="object-position:${x.foco === "arriba" ? "50% 15%" : x.foco === "abajo" ? "50% 85%" : "50% 50%"}"><i style="opacity:${Math.min(.85, Math.max(0, (Number(x.oscuro ?? 45)) / 100))}"></i></div>`).join("") + `<div class="hb-dots" id="hbDots"></div>`;
+  pickHeroSet();
+}
+function pickHeroSet(){
+  const all = [...document.querySelectorAll(".hb")];
+  const sport = document.documentElement.hasAttribute("data-sport");
+  heroSet = all.filter(x => x.dataset.modo === (sport ? "sport" : "general"));
+  if (!heroSet.length) heroSet = all.filter(x => x.dataset.modo === "general");
+  heroIdx = 0; showHero();
+  clearInterval(heroTimer);
+  if (heroSet.length > 1 && !reduce) heroTimer = setInterval(() => { if (!document.hidden){ heroIdx = (heroIdx + 1) % heroSet.length; showHero(); } }, 6500);
+}
+function showHero(){
+  document.querySelectorAll(".hb").forEach(x => x.classList.toggle("on", x === heroSet[heroIdx]));
+  hero.classList.toggle("has-bg", heroSet.length > 0);
+  const d = $("#hbDots"); if (!d) return;
+  d.innerHTML = heroSet.length > 1 ? heroSet.map((_, i) => `<button aria-label="Fondo ${i+1}" aria-current="${i === heroIdx}" data-hb="${i}"></button>`).join("") : "";
+}
+document.addEventListener("click", e => { const b = e.target.closest("[data-hb]"); if (!b) return; heroIdx = +b.dataset.hb; showHero(); });
+function renderShelf(){
+  const count = id => S.products.filter(p => p.categoria === id).length;
+  $("#shelf").innerHTML = SHELF.map((c, i) => { const n = count(c.id);
+    return `<a class="item" href="tienda.html#${c.id}" data-go='${JSON.stringify({ cat:c.id })}' ${c.sport ? "data-sport" : ""} style="--d:${[.6,1,1.4,.9,.7][i]}">
+      <div class="obj"><div class="par">${c.art()}</div></div>
+      <span class="lbl">${esc(c.label)}<small class="num">${n ? `${n} ${n === 1 ? "producto" : "productos"}` : "Ver productos"}</small>${c.sport ? `<span class="tap">Tocá de nuevo para entrar</span>` : ""}</span></a>`; }).join("");
+}
+let lastPointer = "mouse";
+document.addEventListener("pointerdown", e => { lastPointer = e.pointerType; }, true);
+document.addEventListener("pointerover", e => { const t = e.target.closest("[data-sport]"); if (t && e.pointerType === "mouse") setSport(true); });
+document.addEventListener("pointerout", e => { const t = e.target.closest("[data-sport]"); if (t && e.pointerType === "mouse" && !t.contains(e.relatedTarget)) setSport(false); });
+document.addEventListener("focusin", e => { if (e.target.closest("[data-sport]")) setSport(true); });
+document.addEventListener("focusout", e => { if (e.target.closest("[data-sport]")) setSport(false); });
+document.addEventListener("click", e => {
+  const t = e.target.closest("[data-sport]");
+  document.querySelectorAll(".item.armed").forEach(x => { if (x !== t) x.classList.remove("armed"); });
+  if (!t){ if (lastPointer !== "mouse" && !e.target.closest("#heroCta") && document.documentElement.hasAttribute("data-sport")) setSport(false); return; }
+  if (lastPointer !== "mouse" && !t.classList.contains("armed") && t.classList.contains("item")){
+    e.preventDefault(); e.stopPropagation(); setSport(true); t.classList.add("armed");
+  } else { setSport(true); }
+}, true);
+// Paralaje suave del estante siguiendo el puntero
+let tx = 0, ty = 0, cx = 0, cy = 0, raf = 0;
+hero.addEventListener("pointermove", e => { if (e.pointerType !== "mouse" || reduce) return; const r = hero.getBoundingClientRect(); tx = (e.clientX - r.left) / r.width - .5; ty = (e.clientY - r.top) / r.height - .5; if (!raf) raf = requestAnimationFrame(tick); });
+hero.addEventListener("pointerleave", () => { tx = 0; ty = 0; if (!raf) raf = requestAnimationFrame(tick); });
+function tick(){
+  cx += (tx - cx) * .08; cy += (ty - cy) * .08;
+  document.querySelectorAll(".item .par").forEach(el => { const d = parseFloat(el.closest(".item").style.getPropertyValue("--d")) || 1; el.style.transform = `translate3d(${(cx * 26 * d).toFixed(2)}px, ${(cy * 10 * d).toFixed(2)}px, 0)`; });
+  raf = (Math.abs(tx - cx) > .001 || Math.abs(ty - cy) > .001) ? requestAnimationFrame(tick) : 0;
+}
+$("#heroCta").addEventListener("click", e => { if (document.documentElement.hasAttribute("data-sport")){ e.preventDefault(); goStore({ cat:"nutricion-deportiva" }); } });
+// Barra fija
+function onScroll(){
+  bar.classList.toggle("on", hero.getBoundingClientRect().bottom < innerHeight * .35);
+  const a = document.querySelector(".cat.c3"), b = document.querySelector(".cat.c4");
+  bar.classList.toggle("sport", !!a && a.getBoundingClientRect().top < innerHeight * .5 && (!b || b.getBoundingClientRect().top > innerHeight * .5));
+}
+addEventListener("scroll", onScroll, { passive:true }); onScroll();
+
+/* ---------- Datos ---------- */
+const S = { products:[], banners:[], portada:[], showIdx:0, rx:{ piel:null, foco:null, presu:null } };
+const inStock = p => (p.stock ?? 1) > 0;
+
+const NEEDS = [
+  { label:"Granitos y brillo", q:"effaclar", cat:"dermocosmetica", icon:"drop" },
+  { label:"Piel seca", q:"hidrat", cat:"dermocosmetica", icon:"drop" },
+  { label:"Protección solar", q:"solar", icon:"sun" },
+  { label:"Un regalo", cat:"perfumeria", icon:"gift" },
+  { label:"Entrenar mejor", cat:"nutricion-deportiva", icon:"bolt" },
+  { label:"Para el bebé", cat:"maternidad-bebe", icon:"heart" },
+  { label:"El botiquín", cat:"farmacia", icon:"plus" },
+];
+const ICONS = {
+  drop:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.5S5 10 5 14.5a7 7 0 0 0 14 0C19 10 12 2.5 12 2.5z"/></svg>',
+  sun:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><circle cx="12" cy="12" r="4.5" fill="currentColor"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></svg>',
+  gift:'<svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="9" width="18" height="5" rx="1"/><rect x="5" y="14" width="14" height="8" rx="1"/><path d="M12 9c-2-4-6-5-6-2s4 2 6 2zm0 0c2-4 6-5 6-2s-4 2-6 2z"/></svg>',
+  bolt:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg>',
+  heart:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-8-5.2-8-11.2A4.6 4.6 0 0 1 12 7a4.6 4.6 0 0 1 8 2.8C20 15.8 12 21 12 21z"/></svg>',
+  plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round"><path d="M12 4v16M4 12h16"/></svg>',
+};
+$("#needs").innerHTML = NEEDS.map(n => `<a class="need" href="tienda.html${n.cat ? "#" + n.cat : ""}" ${n.cat === "nutricion-deportiva" ? "data-sport" : ""} data-go='${JSON.stringify({ cat:n.cat || null, q:n.q || "" })}'><i>${ICONS[n.icon]}</i>${esc(n.label)}</a>`).join("");
+$("#footCats").innerHTML = ALL_CATS.map(c => `<a href="tienda.html#${c.id}" data-go='${JSON.stringify({ cat:c.id })}'>${esc(c.label)}</a>`).join("");
+function renderCloseArt(){ $("#closeArt").innerHTML = [["perfumeria","#121110"],["dermocosmetica","#F7D3E0"],["nutricion-deportiva","#E9DCCB"]].map(([cat,bg]) => `<div style="background:${bg}">${repArt(cat, 1)}</div>`).join(""); }
+$("#rxDate").textContent = new Date().toLocaleDateString("es-AR", { day:"numeric", month:"long", year:"numeric" });
+$("#copyIg").onclick = async e => { const b = e.currentTarget; try { await navigator.clipboard.writeText("@purafarma.ok"); b.textContent = "Copiado"; } catch (err) { b.textContent = "@purafarma.ok"; } setTimeout(() => b.textContent = "Copiar usuario", 1800); };
+
+function renderFacts(){
+  const n = S.products.length, brands = new Set(S.products.map(p => p.marca).filter(Boolean)).size, offs = S.products.filter(off).length;
+  const facts = [
+    [n || "—", "productos para comprar online"],
+    [brands || "—", "marcas de farmacia y perfumería"],
+    [offs || "—", "productos con precio rebajado"],
+    ["6", "categorías, de la piel al botiquín"],
+  ];
+  $("#facts").innerHTML = facts.map(([b,s], i) => `<div class="fact rise ${i ? "d" + Math.min(i,2) : ""}"><b>${b}</b><span>${s}</span></div>`).join("");
+}
+
+/* Destacados */
+function showList(){
+  const d = S.products.filter(p => p.destacado && inStock(p));
+  const extra = S.products.filter(p => !p.destacado && inStock(p)).sort((a,b) => off(b) - off(a));
+  return [...d, ...extra].slice(0, 4);
+}
+function renderShow(swap){
+  const list = showList(); const sec = $("#destacados");
+  sec.hidden = !list.length; if (!list.length) return;
+  S.showIdx = Math.min(S.showIdx, list.length - 1);
+  const p = list[S.showIdx], o = off(p);
+  $("#tabs").innerHTML = list.map((x,i) => `<button class="tab" role="tab" aria-selected="${i === S.showIdx}" data-tab="${i}">${esc(x.nombre.split(" ").slice(0, 2).join(" ").replace(/[,.]$/, ""))}</button>`).join("");
+  const art = $("#plateArt");
+  const paint = () => { art.innerHTML = productArt(p); $("#plate").querySelector(".off")?.remove(); if (o) $("#plate").insertAdjacentHTML("beforeend", `<span class="off num">−${o}%</span>`); art.classList.remove("out"); };
+  if (swap && !reduce){ art.classList.add("out"); setTimeout(paint, 220); } else paint();
+  const body = $("#showBody");
+  body.innerHTML = `<p class="brand">${esc(p.marca || "")}</p><h3>${esc(p.nombre)}</h3>${p.descripcion && !/^Producto de ejemplo\.?$/.test(p.descripcion) ? `<p class="d">${esc(p.descripcion.replace(/^Producto de ejemplo\.\s*/,""))}</p>` : ""}<p class="price num">${money(p.precio)}${o ? `<s>${money(p.precioAnterior)}</s>` : ""}</p>`;
+  if (swap){ body.classList.remove("swapin"); void body.offsetWidth; body.classList.add("swapin"); }
+  $("#cells").innerHTML = `<button class="cell a" data-add="${esc(p.id)}">Agregar al carrito</button><a class="cell b" href="tienda.html" data-go='${JSON.stringify({ brand:p.marca || null })}'>Más de ${esc(p.marca || "esta marca")}</a>`;
+}
+$("#tabs").addEventListener("click", e => { const t = e.target.closest("[data-tab]"); if (!t) return; S.showIdx = +t.dataset.tab; renderShow(true); });
+$("#tabs").addEventListener("keydown", e => { if (!["ArrowRight","ArrowLeft"].includes(e.key)) return; const n = showList().length; S.showIdx = (S.showIdx + (e.key === "ArrowRight" ? 1 : -1) + n) % n; renderShow(true); $("#tabs").querySelector('[aria-selected="true"]')?.focus(); });
+document.addEventListener("click", e => { const a = e.target.closest("[data-add]"); if (!a) return; addToCart([a.dataset.add]); const t = a.textContent; a.textContent = "¡Agregado!"; setTimeout(() => a.textContent = t, 1400); });
+
+/* Marcas */
+function renderBrands(){
+  const names = [...new Set(S.products.map(p => p.marca).filter(Boolean))];
+  const sec = $("#marquee").closest("section"); sec.hidden = !names.length; if (!names.length) return;
+  const row = names.map(m => `<button data-go='${JSON.stringify({ brand:m })}'>${esc(m)}</button>`).join("");
+  $("#marquee").innerHTML = row + row.replace(/<button /g, '<button aria-hidden="true" tabindex="-1" ');
+}
+
+/* Ofertas */
+function renderOffers(){
+  const list = S.products.filter(p => off(p) && inStock(p)).sort((a,b) => off(b) - off(a)).slice(0, 10);
+  $("#ofertas").hidden = !list.length; if (!list.length) return;
+  $("#offers").innerHTML = list.map(p => `<a class="ticket" href="tienda.html" data-go='${JSON.stringify({ q:p.nombre })}'>
+    <div class="stub"><b class="num">−${off(p)}%</b><span>${esc(ALL_CATS.find(c => c.id === p.categoria)?.label || "")}</span></div>
+    <div class="body"><p class="br">${esc(p.marca || "")}</p><p class="nm">${esc(p.nombre)}</p><p class="pr num">${money(p.precio)}<s>${money(p.precioAnterior)}</s></p></div></a>`).join("");
+}
+
+/* Categorías */
+function renderSheets(){
+  $("#sheets").innerHTML = CATS.map(c => {
+    const items = S.products.filter(p => p.categoria === c.id || (c.id === "farmacia" && p.categoria === "cuidado-personal"));
+    const top = [...items].sort((a,b) => (b.destacado?1:0) - (a.destacado?1:0) || off(b) - off(a)).slice(0,3);
+    return `<article class="cat ${c.cls}">
+      <div class="cat-text"><div>${c.sport ? `<p class="sportmark">SPORT</p>` : ""}<h3>${esc(c.label)}</h3><p class="cnt num">${items.length ? `${items.length} ${items.length === 1 ? "producto" : "productos"} online` : "Muy pronto online"}</p></div>
+        <p>${esc(c.text)}</p>
+        ${top.length ? `<ul class="cat-list num">${top.map(p => `<li><span>${esc(p.nombre)}</span><span>${money(p.precio)}</span></li>`).join("")}</ul>` : ""}
+        <a ${c.sport ? "data-sport " : ""}class="btn ${c.cls === "c2" ? "btn-pink" : c.cls === "c1" ? "btn-light" : "btn-ink"}" href="tienda.html#${c.id}" data-go='${JSON.stringify({ cat:c.id })}' style="justify-self:start; width:fit-content">Ver ${esc(c.label.toLowerCase())} <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+      <div class="cat-art" aria-hidden="true"><div class="trio">${repArt(c.id, 3)}</div></div></article>`;
+  }).join("");
+}
+
+/* ---------- Receta de rutina ---------- */
+const QS = [
+  { k:"piel", t:"¿Cómo es tu piel?", o:[["grasa","Grasa"],["mixta","Mixta"],["seca","Seca"],["sensible","Sensible"],["normal","Normal"]] },
+  { k:"foco", t:"¿Qué querés mejorar primero?", o:[["acne","Granitos y brillo"],["hidratacion","Hidratación"],["manchas","Manchas"],["antiage","Líneas y firmeza"],["calma","Rojeces"]] },
+  { k:"presu", t:"¿Cuánto querés invertir?", o:[["bajo","Lo justo"],["medio","Equilibrado"],["alto","Lo mejor"]] },
+];
+const STEP = {
+  limpiar:/limpi|espum|micelar|jab[oó]n|gel limpiador|agua termal/i,
+  tratar:/s[eé]rum|crema|hidrat|effaclar|mineral|retinol|vitamina|duo|emulsi|fluido(?!.*fps)/i,
+  proteger:/solar|fps|spf|anthelios|protector|fusion water|uv/i,
+};
+const FOCO = { acne:/effaclar|acn|imperfec|grasa|purif|sebo|normaderm|duo|matific/i, hidratacion:/hidrat|ceramid|seca|mineral 89|hialur|nutri/i,
+  manchas:/mancha|vitamina c|luminos|pigment|uvmune|uniform/i, antiage:/anti.?age|arrug|retinol|lift|firm|mineral 89|colag/i, calma:/sensib|calm|toleriane|cicaplast|termal|suave|rojec/i };
+const PIEL = { grasa:FOCO.acne, mixta:/mixta|normal a grasa|gel|fluido|equilibr/i, seca:FOCO.hidratacion, sensible:FOCO.calma, normal:/normal/i };
+function prescribe(){
+  const { piel, foco, presu } = S.rx;
+  const pool = S.products.filter(p => inStock(p) && (p.categoria === "dermocosmetica" || p.categoria === "cuidado-personal"));
+  const used = new Set();
+  return ["limpiar","tratar","proteger"].map(step => {
+    let c = pool.filter(p => !used.has(p.id) && STEP[step].test(p.nombre + " " + (p.descripcion||"")));
+    if (step !== "proteger") c = c.filter(p => !STEP.proteger.test(p.nombre));
+    if (step === "tratar") c = c.filter(p => !STEP.limpiar.test(p.nombre));
+    if (!c.length) return { step, p:null };
+    const prices = c.map(p => p.precio).sort((a,b) => a-b), mid = prices[Math.floor(prices.length/2)];
+    const score = p => { const txt = p.nombre + " " + (p.descripcion||""); let s = 0;
+      if (FOCO[foco]?.test(txt)) s += 3; if (PIEL[piel]?.test(txt)) s += 2; if (p.destacado) s += .5;
+      if (presu === "bajo") s -= p.precio / mid * .8; else if (presu === "alto") s += p.precio / mid * .8; else s -= Math.abs(p.precio - mid) / mid * .4;
+      return s; };
+    const best = c.sort((a,b) => score(b) - score(a))[0]; used.add(best.id); return { step, p:best };
+  });
+}
+const STEP_LABEL = { limpiar:"Limpiar", tratar:"Tratar", proteger:"Proteger" };
+const STEP_WHEN = { limpiar:"Mañana y noche", tratar:"Mañana y noche, después de limpiar", proteger:"Todas las mañanas, como último paso" };
+function renderRx(){
+  $("#rxQs").innerHTML = QS.map(q => `<div class="q"><h3>${q.t}</h3><div class="opts" role="group" aria-label="${esc(q.t)}">${q.o.map(([v,l]) => `<button class="opt" data-q="${q.k}" data-v="${v}" aria-pressed="${S.rx[q.k] === v}">${l}</button>`).join("")}</div></div>`).join("");
+  const out = $("#rxOut");
+  const missing = QS.filter(q => !S.rx[q.k]).length;
+  if (missing){ out.innerHTML = `<p class="rx-note">${missing === 3 ? "Elegí una opción en cada pregunta y la receta se escribe sola." : `Te ${missing === 1 ? "falta una respuesta" : "faltan " + missing + " respuestas"}.`}</p>`; return; }
+  if (!S.products.length){ out.innerHTML = `<p class="rx-note">Estamos cargando el catálogo. Probá de nuevo en unos segundos.</p>`; return; }
+  const lines = prescribe(); const got = lines.filter(l => l.p);
+  const pielL = QS[0].o.find(o => o[0] === S.rx.piel)[1].toLowerCase(), focoL = QS[1].o.find(o => o[0] === S.rx.foco)[1].toLowerCase();
+  const total = got.reduce((a,l) => a + l.p.precio, 0);
+  out.innerHTML = `<h3>Para piel ${pielL}, con foco en ${focoL}</h3>
+    ${lines.map(l => l.p ? `<div class="rx-line"><span class="step">${STEP_LABEL[l.step]}</span><div class="th">${productArt(l.p)}</div><p class="n">${esc(l.p.nombre)}<small>${esc(l.p.marca || "")} · ${STEP_WHEN[l.step]}</small></p><span class="pr num">${money(l.p.precio)}</span></div>`
+      : `<div class="rx-line none"><span class="step">${STEP_LABEL[l.step]}</span><div class="th">${ART.pill()}</div><p class="n">Consultanos por este paso<small>Te recomendamos un producto por Instagram</small></p><span></span></div>`).join("")}
+    ${got.length ? `<div class="rx-total"><span>Rutina completa</span><b class="num">${money(total)}</b></div>
+    <div class="rx-actions"><button class="btn btn-pink" id="rxAdd">Sumar la rutina al carrito</button><a class="btn btn-ink" href="tienda.html#dermocosmetica" data-go='${JSON.stringify({ cat:"dermocosmetica" })}'>Ver más opciones</a></div>` : ""}
+    <p class="rx-note">Es una orientación cosmética según lo que elegiste. Si tenés una afección de la piel, consultá con tu dermatólogo.</p>
+    <p class="sign"><b>Equipo Purafarma</b>Farmacia y perfumería</p>`;
+  if (!reduce){ out.classList.remove("swapin"); void out.offsetWidth; out.classList.add("swapin"); }
+  $("#rxAdd")?.addEventListener("click", e => { addToCart(got.map(l => l.p.id)); const b = e.currentTarget; b.textContent = "Rutina en tu carrito"; setTimeout(() => { b.outerHTML = `<a class="btn btn-pink" href="tienda.html#carrito">Ir al carrito <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>`; }, 900); });
+}
+$("#rxQs").addEventListener("click", e => { const b = e.target.closest("[data-q]"); if (!b) return; S.rx[b.dataset.q] = b.dataset.v; renderRx(); });
+
+function watchSport(){ onScroll(); }
+function renderAll(){ renderShelf(); renderCloseArt(); renderFacts(); renderShow(); renderBrands(); renderOffers(); renderSheets(); watchSport(); renderRx(); updateCart(); }
+renderAll();
+
+
+/* Suscripción en vivo con reintentos y lectura única de respaldo */
+const _unsubs = [];
+addEventListener("pagehide", () => _unsubs.forEach(u => { try { u(); } catch (e) {} }));
+function live(db, path, onData, onFail){
+  let tries = 0, got = false;
+  const once = () => db.collection(path).get().then(s => { got = true; onData(s); }).catch(e => { if (!got && onFail) onFail(e); });
+  const start = () => { try { _unsubs.push(db.collection(path).onSnapshot(s => { got = true; tries = 0; onData(s); }, e => {
+    tries++; if (tries <= 4) setTimeout(start, 700 * tries); else if (!got) once(); })); } catch (e) { once(); } };
+  start();
+  setTimeout(() => { if (!got) once(); }, 5000);
+}
+/* Fuera de claude.ai no hay base de datos en vivo: se leen los JSON de /data */
+async function loadStatic(name){ try { const r = await fetch("data/" + name + ".json", { cache:"no-store" }); if (!r.ok) return null; const a = await r.json(); return { docs: a.map(x => ({ id:x.id, data:() => { const { id, ...rest } = x; return rest; } })) }; } catch (e) { return null; } }
+(async () => {
+  const use = window.claude && window.claude.use ? window.claude.use.bind(window.claude) : null;
+  const db = use ? await Promise.resolve(use("db")).catch(() => null) : null;
+  if (!db){
+    const p = await loadStatic("productos"); if (p){ S.products = p.docs.map(d => ({ id:d.id, ...d.data() })).map(x => ({ ...x, precio:Number(x.precio)||0, precioAnterior:Number(x.precioAnterior)||0 })); renderAll(); }
+    const h = await loadStatic("portada"); if (h){ S.portada = h.docs.map(d => ({ id:d.id, ...d.data() })); renderHeroBg(); }
+    return;
+  }
+  live(db, "productos", snap => {
+    S.products = snap.docs.map(d => ({ id:d.id, ...d.data() })).map(p => ({ ...p, precio:Number(p.precio)||0, precioAnterior:Number(p.precioAnterior)||0 }));
+    renderAll();
+  }, () => {});
+  live(db, "portada", snap => { S.portada = snap.docs.map(d => ({ id:d.id, ...d.data() })); renderHeroBg(); }, () => {});
+})();
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,754 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{color-scheme:light; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px)} body{margin:0} img{max-width:100%} [hidden]{display:none!important}</style>
+<title>Purafarma Catálogo</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@1,800&family=Poppins:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: vidriera de farmacia. Toldo rayado arriba, banners de marca a todo el ancho, góndola de productos en grilla, carrito como cajón lateral. */
+:root{
+  --bg:#F5F1EB; --surface:#FFFFFF; --surface-2:#ECE6DD; --ink:#121110; --ink-2:#5E574F;
+  --line:#DCD4C9; --pink:#E23E7E; --pink-hover:#CC2F6D; --pink-ink:#FFFFFF; --pink-soft:#FBE4ED;
+  --ok:#2C7A4B; --scrim:rgba(18,17,16,.42);
+  --font:"Poppins", ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --ease-out:cubic-bezier(.23,1,.32,1); --ease-io:cubic-bezier(.77,0,.175,1); --ease-drawer:cubic-bezier(.32,.72,0,1);
+  --r:14px; --gut:max(16px, env(safe-area-inset-left, 0px)); --gut-r:max(16px, env(safe-area-inset-right, 0px));
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#151312; --surface:#1E1B19; --surface-2:#292522; --ink:#F5F1EB; --ink-2:#ADA49A;
+  --line:#3A342F; --pink:#F05A96; --pink-hover:#F47AAA; --pink-ink:#1A0B11; --pink-soft:#3B1D2A;
+  --ok:#5BBE84; --scrim:rgba(0,0,0,.6); color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#151312; --surface:#1E1B19; --surface-2:#292522; --ink:#F5F1EB; --ink-2:#ADA49A;
+  --line:#3A342F; --pink:#F05A96; --pink-hover:#F47AAA; --pink-ink:#1A0B11; --pink-soft:#3B1D2A;
+  --ok:#5BBE84; --scrim:rgba(0,0,0,.6); color-scheme:dark }
+
+/* Purafarma Sport: paleta de nutrición deportiva */
+:root[data-sport]{
+  --bg:#0B0B0B; --surface:#161616; --surface-2:#232323; --ink:#FFFFFF; --ink-2:#ABABAB;
+  --line:#2E2E2E; --pink:#FF5000; --pink-hover:#FF6B26; --pink-ink:#0B0B0B; --pink-soft:#3A1B0A;
+  --ok:#5BBE84; --scrim:rgba(0,0,0,.65); color-scheme:dark }
+body,.top,.card,.chip,.brandpill,.drawer,.d-foot,.empty,footer,.search input{transition:background-color 450ms ease, color 450ms ease, border-color 450ms ease}
+*{box-sizing:border-box}
+body{background:var(--bg); color:var(--ink); font-family:var(--font); font-size:15px; line-height:1.55; -webkit-font-smoothing:antialiased}
+body::before{content:""; position:fixed; inset:0 0 auto; height:env(safe-area-inset-top,0px); z-index:40; background:var(--bg)}
+body.locked{overflow:hidden}
+button,input,select,textarea{font:inherit; color:inherit}
+button{cursor:pointer; background:none; border:0; padding:0}
+:focus-visible{outline:2px solid var(--pink); outline-offset:2px; border-radius:6px}
+h1,h2,h3{text-wrap:balance; margin:0}
+p{margin:0}
+.wrap{max-width:1320px; margin:0 auto; padding-left:var(--gut); padding-right:var(--gut-r)}
+.num{font-variant-numeric:tabular-nums}
+.sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap}
+
+/* Toldo */
+.awning{height:14px; background:repeating-linear-gradient(90deg, var(--ink) 0 28px, var(--bg) 28px 56px)}
+
+/* Header */
+.top{position:sticky; top:env(safe-area-inset-top,0px); z-index:30; background:var(--bg)}
+.top-in{display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:24px; padding-block:14px}
+.mark{display:inline-flex; flex-direction:column; align-items:stretch; line-height:1; text-decoration:none; color:var(--ink)}
+.mark b{font-weight:600; font-size:24px; letter-spacing:.09em}
+.mark > span{display:flex; align-items:center; gap:8px; font-size:8.5px; font-weight:600; letter-spacing:.16em; margin-top:6px; white-space:nowrap; transition:color 400ms ease}
+.mark > span::before,.mark > span::after{content:""; flex:1; height:1.5px; background:currentColor; min-width:10px}
+.mark .s{display:none; font-family:"Exo 2", var(--font); font-style:italic; font-weight:800; font-size:15px; letter-spacing:.06em; line-height:.8}
+:root[data-sport] .mark > span{color:var(--pink)}
+:root[data-sport] .mark .n{display:none}
+:root[data-sport] .mark .s{display:inline}
+.search{position:relative; max-width:560px; width:100%; justify-self:center}
+.search input{width:100%; height:46px; border-radius:999px; border:1.5px solid transparent; background:var(--surface); padding:0 20px 0 46px; font-size:15px; transition:border-color 160ms ease}
+.search input::placeholder{color:var(--ink-2)}
+.search input:focus{outline:none; border-color:var(--ink)}
+.search svg{position:absolute; left:17px; top:50%; translate:0 -50%; width:18px; height:18px; color:var(--ink-2); pointer-events:none}
+.actions{display:flex; gap:8px; align-items:center}
+.iconbtn{position:relative; height:46px; min-width:46px; padding:0 16px; border-radius:999px; display:inline-flex; align-items:center; justify-content:center; gap:8px; font-weight:500; background:var(--surface); transition:transform 160ms var(--ease-out), background-color 160ms ease}
+.iconbtn:active{transform:scale(.96)}
+.iconbtn svg{width:20px; height:20px}
+.iconbtn.dark{background:var(--ink); color:var(--bg)}
+.badge{position:absolute; top:-4px; right:-4px; min-width:22px; height:22px; border-radius:999px; background:var(--pink); color:var(--pink-ink); font-size:12px; font-weight:600; display:grid; place-items:center; padding:0 6px; border:2px solid var(--bg)}
+.badge[hidden]{display:none!important}
+.bump{animation:bump 360ms var(--ease-out)}
+@keyframes bump{0%{transform:scale(1)}35%{transform:scale(1.28)}100%{transform:scale(1)}}
+
+.cats{display:flex; gap:8px; overflow-x:auto; padding-bottom:14px; scrollbar-width:none}
+.cats::-webkit-scrollbar{display:none}
+.chip{flex:none; height:38px; padding:0 16px; border-radius:999px; background:transparent; border:1.5px solid var(--line); font-size:14px; font-weight:500; white-space:nowrap; transition:background-color 180ms ease, color 180ms ease, border-color 180ms ease, transform 160ms var(--ease-out)}
+.chip:active{transform:scale(.97)}
+@media (hover:hover) and (pointer:fine){ .chip:hover{border-color:var(--ink)} }
+.chip[aria-pressed="true"]{background:var(--ink); color:var(--bg); border-color:var(--ink)}
+
+/* Hero banners */
+.hero{padding-top:8px}
+.carousel{position:relative; overflow:hidden; border-radius:var(--r); touch-action:pan-y}
+.track{display:flex; transition:transform 640ms var(--ease-io)}
+.track.dragging{transition:none}
+.slide{flex:0 0 100%; min-height:400px; display:grid; grid-template-columns:1.1fr 1fr; align-items:center; gap:24px; padding:48px clamp(24px,5vw,72px); position:relative; overflow:hidden}
+.slide .s-brand{font-size:15px; font-weight:600; letter-spacing:.14em; text-transform:uppercase}
+.slide h2{font-size:clamp(34px,4.6vw,64px); line-height:1.02; letter-spacing:-.025em; font-weight:700; margin-top:14px; max-width:14ch}
+.slide p.s-sub{font-size:17px; margin-top:16px; max-width:40ch; opacity:.85}
+.slide .s-cta{margin-top:28px}
+.slide-media{height:100%; min-height:300px; display:grid; place-items:center}
+.slide-media img{max-height:340px; width:100%; object-fit:contain}
+.slide-word{font-weight:700; font-size:clamp(56px,9vw,150px); line-height:.85; letter-spacing:-.04em; text-align:right; opacity:.14; word-break:break-word; text-transform:uppercase}
+.slide.brandslide .slide-word{opacity:1; letter-spacing:.06em; font-weight:600; font-size:clamp(44px,7vw,108px)}
+.cbtn{position:absolute; top:50%; translate:0 -50%; width:44px; height:44px; border-radius:999px; background:var(--surface); color:var(--ink); display:grid; place-items:center; transition:transform 160ms var(--ease-out), opacity 200ms ease; z-index:2}
+.cbtn:active{transform:scale(.94)}
+.cbtn svg{width:18px; height:18px}
+.cbtn.prev{left:14px} .cbtn.next{right:14px}
+.dots{position:absolute; left:50%; bottom:18px; translate:-50% 0; display:flex; gap:6px; z-index:2}
+.dot{width:8px; height:8px; border-radius:999px; background:currentColor; opacity:.35; transition:width 300ms var(--ease-out), opacity 300ms ease}
+.dot[aria-current="true"]{width:26px; opacity:1}
+
+/* Buttons */
+.btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; height:48px; padding:0 26px; border-radius:999px; font-weight:600; font-size:15px; transition:transform 160ms var(--ease-out), background-color 180ms ease, color 180ms ease}
+.btn:active{transform:scale(.97)}
+.btn-pink{background:var(--pink); color:var(--pink-ink)}
+@media (hover:hover) and (pointer:fine){ .btn-pink:hover{background:var(--pink-hover)} }
+.btn-ink{background:var(--ink); color:var(--bg)}
+.btn-ghost{background:var(--surface-2); color:var(--ink)}
+.btn-sm{height:38px; padding:0 16px; font-size:14px}
+.btn[disabled]{opacity:.45; cursor:not-allowed; transform:none}
+
+/* Marcas */
+.section{padding-top:72px}
+.sec-head{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap; margin-bottom:22px}
+.sec-head h2{font-size:clamp(26px,3vw,38px); letter-spacing:-.02em; font-weight:600; line-height:1.1}
+.sec-head p{color:var(--ink-2); margin-top:6px}
+.brands{display:flex; gap:10px; overflow-x:auto; padding-bottom:6px; scrollbar-width:thin}
+.brandpill{flex:none; min-width:150px; height:84px; padding:0 22px; border-radius:var(--r); background:var(--surface); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; transition:transform 180ms var(--ease-out), background-color 180ms ease, color 180ms ease}
+.brandpill b{font-size:15px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; white-space:nowrap}
+.brandpill small{font-size:12px; color:var(--ink-2)}
+.brandpill:active{transform:scale(.97)}
+@media (hover:hover) and (pointer:fine){ .brandpill:hover{transform:translateY(-2px)} }
+.brandpill[aria-pressed="true"]{background:var(--ink); color:var(--bg)}
+.brandpill[aria-pressed="true"] small{color:inherit; opacity:.7}
+
+/* Catálogo */
+.toolbar{display:flex; gap:10px; align-items:center; flex-wrap:wrap}
+.select{height:40px; border-radius:999px; border:1.5px solid var(--line); background:var(--bg); padding:0 36px 0 16px; font-size:14px; font-weight:500; appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 12px center; background-size:16px}
+.active-filters{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px}
+.active-filters:empty{display:none}
+.tag{display:inline-flex; align-items:center; gap:6px; height:32px; padding:0 8px 0 14px; border-radius:999px; background:var(--pink-soft); color:var(--ink); font-size:13px; font-weight:500}
+.tag button{width:22px; height:22px; border-radius:999px; display:grid; place-items:center}
+.tag button:hover{background:var(--surface)}
+.grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(230px,1fr)); gap:16px}
+.card{background:var(--surface); border-radius:var(--r); display:flex; flex-direction:column; overflow:hidden; position:relative}
+.card.rise{animation:rise 420ms var(--ease-out) both; animation-delay:calc(var(--i,0) * 40ms)}
+@keyframes rise{from{opacity:.001; transform:translateY(14px)}to{opacity:1; transform:none}}
+.card-media{display:block; width:100%; aspect-ratio:1/1; background:var(--surface-2); position:relative; overflow:hidden}
+.card-media img{width:100%; height:100%; object-fit:contain; padding:14px; transition:transform 500ms var(--ease-out)}
+@media (hover:hover) and (pointer:fine){ .card:hover .card-media img, .card:hover .ph svg{transform:scale(1.04)} }
+.off{position:absolute; top:12px; left:12px; background:var(--pink); color:var(--pink-ink); font-size:13px; font-weight:600; height:28px; padding:0 10px; border-radius:999px; display:inline-flex; align-items:center}
+.ph{width:100%; height:100%; display:grid; place-items:center; color:var(--ink-2)}
+.ph svg{height:84%; width:auto; transition:transform 500ms var(--ease-out)}
+.card-body{padding:16px 16px 18px; display:flex; flex-direction:column; gap:4px; flex:1}
+.card-brand{font-size:11.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-2)}
+.card-name{font-size:15px; font-weight:500; line-height:1.35; text-align:left; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; min-height:2.7em}
+.card-name:hover{text-decoration:underline; text-underline-offset:3px}
+.price{display:flex; align-items:baseline; gap:8px; margin-top:6px; flex-wrap:wrap}
+.price .now{font-size:20px; font-weight:600; letter-spacing:-.01em}
+.price s{color:var(--ink-2); font-size:14px}
+.buy{margin-top:auto; padding-top:14px}
+.buy .btn{width:100%; height:44px}
+.swap{animation:swap 220ms var(--ease-out)}
+@keyframes swap{from{filter:blur(3px); opacity:.5; transform:scale(.98)}to{filter:none; opacity:1; transform:none}}
+.stepper{display:grid; grid-template-columns:44px 1fr 44px; height:44px; border-radius:999px; background:var(--ink); color:var(--bg); align-items:center; overflow:hidden}
+.stepper button{height:100%; display:grid; place-items:center; transition:background-color 140ms ease}
+.stepper button:active{background:rgba(127,127,127,.25)}
+.stepper button svg{width:16px; height:16px}
+.stepper output{text-align:center; font-weight:600; font-variant-numeric:tabular-nums}
+.stepper.light{background:var(--surface-2); color:var(--ink); height:38px; grid-template-columns:38px 40px 38px}
+.nostock{display:flex; align-items:center; justify-content:center; height:44px; border-radius:999px; background:var(--surface-2); color:var(--ink-2); font-size:14px; font-weight:500}
+
+.empty{grid-column:1/-1; background:var(--surface); border-radius:var(--r); padding:56px 24px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:12px}
+.empty h3{font-size:22px; font-weight:600}
+.empty p{color:var(--ink-2); max-width:46ch}
+.sk{background:var(--surface); border-radius:var(--r); aspect-ratio:3/4.4; position:relative; overflow:hidden}
+.sk::after{content:""; position:absolute; inset:0; background:linear-gradient(90deg, transparent, var(--surface-2), transparent); transform:translateX(-100%); animation:shimmer 1.4s linear infinite}
+@keyframes shimmer{to{transform:translateX(100%)}}
+
+/* Footer */
+footer{margin-top:112px; background:var(--ink); color:var(--bg)}
+.foot{padding-block:64px 40px; display:grid; gap:40px}
+.foot-word{font-weight:600; letter-spacing:.08em; font-size:clamp(48px,11vw,168px); line-height:.9}
+.foot-cols{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:28px}
+.foot-cols h3{font-size:14px; font-weight:600; margin-bottom:10px}
+.foot-cols p, .foot-cols button{font-size:14px; opacity:.75; display:block; text-align:left; line-height:1.9}
+.foot-cols button:hover{opacity:1}
+.foot small{opacity:.55; font-size:12px}
+
+/* Overlays */
+.scrim{position:fixed; inset:0; background:var(--scrim); z-index:50; opacity:0; pointer-events:none; transition:opacity 280ms ease}
+.scrim.on{opacity:1; pointer-events:auto}
+.drawer{position:fixed; top:0; right:0; bottom:0; width:min(460px,100%); background:var(--bg); z-index:60; display:flex; flex-direction:column; transform:translateX(100%); transition:transform 420ms var(--ease-drawer); padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px); padding-right:env(safe-area-inset-right,0px); visibility:hidden}
+.drawer.open{transform:none; visibility:visible}
+.d-head{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:18px 20px; flex:none}
+.d-head h2{font-size:22px; font-weight:600}
+.d-body{flex:1; overflow-y:auto; padding:4px 20px 20px; overscroll-behavior:contain}
+.d-foot{flex:none; padding:16px 20px 20px; background:var(--surface); display:grid; gap:12px}
+.close{width:40px; height:40px; border-radius:999px; background:var(--surface); display:grid; place-items:center; transition:transform 160ms var(--ease-out)}
+.close:active{transform:scale(.94)}
+.close svg{width:18px; height:18px}
+
+.line{display:grid; grid-template-columns:72px 1fr auto; gap:14px; align-items:center; padding:14px 0}
+.line + .line{border-top:1px solid var(--line)}
+.thumb{width:72px; height:72px; border-radius:10px; background:var(--surface); overflow:hidden; display:grid; place-items:center}
+.thumb img{width:100%; height:100%; object-fit:contain; padding:6px}
+.thumb .ph svg{height:86%; width:auto}
+.line-info{min-width:0}
+.line-info .card-brand{font-size:10.5px}
+.line-info p.n{font-size:14px; font-weight:500; line-height:1.3; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical}
+.line-ctrl{display:flex; flex-direction:column; align-items:flex-end; gap:8px}
+.line-ctrl .sum{font-weight:600}
+.totrow{display:flex; justify-content:space-between; align-items:baseline}
+.totrow b{font-size:22px; font-weight:600}
+.upsell{margin-top:20px; background:var(--surface); border-radius:var(--r); padding:16px}
+.upsell h3{font-size:15px; font-weight:600; margin-bottom:4px}
+.upsell > p{font-size:13px; color:var(--ink-2); margin-bottom:6px}
+.up{display:grid; grid-template-columns:52px 1fr auto; gap:12px; align-items:center; padding:10px 0}
+.up .thumb{width:52px; height:52px; background:var(--surface-2)}
+.up p{font-size:13.5px; line-height:1.3}
+.up .p{font-weight:600; font-size:13.5px}
+.plus{width:38px; height:38px; border-radius:999px; background:var(--pink); color:var(--pink-ink); display:grid; place-items:center; transition:transform 160ms var(--ease-out)}
+.plus:active{transform:scale(.92)}
+.plus svg{width:16px; height:16px}
+
+/* Forms */
+.field{display:grid; gap:6px}
+.field label, .lbl{font-size:13px; font-weight:500}
+.field input, .field select, .field textarea{width:100%; min-height:44px; border-radius:10px; border:1.5px solid var(--line); background:var(--surface); padding:10px 14px; font-size:15px}
+.field textarea{min-height:96px; resize:vertical}
+.field input:focus, .field select:focus, .field textarea:focus{outline:none; border-color:var(--ink)}
+.field .hint{font-size:12.5px; color:var(--ink-2)}
+.form{display:grid; gap:16px}
+.row2{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+.seg{display:grid; grid-template-columns:1fr 1fr; background:var(--surface-2); border-radius:999px; padding:4px; gap:4px}
+.seg button{height:40px; border-radius:999px; font-weight:500; font-size:14px; transition:background-color 180ms ease}
+.seg button[aria-pressed="true"]{background:var(--surface)}
+.check{display:flex; align-items:center; gap:10px; font-size:14px}
+.check input{width:20px; height:20px; accent-color:var(--pink)}
+.done{text-align:center; padding:12px 0 8px; display:grid; gap:10px; justify-items:center}
+.done .ok{width:60px; height:60px; border-radius:999px; background:var(--pink-soft); color:var(--pink); display:grid; place-items:center}
+.done .ok svg{width:28px; height:28px}
+.done h3{font-size:22px; font-weight:600}
+.done p{color:var(--ink-2); max-width:36ch}
+pre.order{white-space:pre-wrap; background:var(--surface); border-radius:var(--r); padding:16px; font:inherit; font-size:13.5px; text-align:left; width:100%; margin:6px 0 0}
+
+/* Modal producto */
+.modal{position:fixed; z-index:60; left:50%; top:50%; width:min(920px, calc(100% - 32px)); max-height:min(88vh, 760px); background:var(--bg); border-radius:20px; overflow:hidden; display:grid; grid-template-columns:1fr 1fr; transform:translate(-50%,-50%) scale(.96); opacity:0; visibility:hidden; transition:transform 240ms var(--ease-out), opacity 200ms ease, visibility 0s 240ms}
+.modal.open{transform:translate(-50%,-50%); opacity:1; visibility:visible; transition:transform 300ms var(--ease-out), opacity 200ms ease}
+.m-media{background:var(--surface); display:grid; place-items:center; min-height:320px}
+.m-media img{width:100%; height:100%; max-height:560px; object-fit:contain; padding:28px}
+.m-media .ph svg{height:min(380px, 70%); width:auto}
+.m-info{padding:28px; overflow-y:auto; display:flex; flex-direction:column; gap:10px}
+.m-info h2{font-size:26px; font-weight:600; line-height:1.2; letter-spacing:-.01em}
+.m-info .price .now{font-size:28px}
+.m-desc{color:var(--ink-2); font-size:14.5px}
+.m-buy{display:flex; gap:10px; margin-top:8px; flex-wrap:wrap}
+.m-buy .btn{flex:1; min-width:180px}
+.m-close{position:absolute; top:14px; right:14px; z-index:2}
+.stock{font-size:13px; color:var(--ok); font-weight:500}
+.stock.no{color:var(--pink)}
+.rel{margin-top:14px}
+.rel h3{font-size:14px; font-weight:600; margin-bottom:4px}
+
+.toast{position:fixed; left:50%; bottom:calc(24px + env(safe-area-inset-bottom,0px)); transform:translate(-50%, 20px); opacity:0; background:var(--ink); color:var(--bg); padding:12px 20px; border-radius:999px; font-size:14px; font-weight:500; z-index:80; transition:transform 300ms var(--ease-out), opacity 200ms ease; pointer-events:none; max-width:calc(100% - 32px); text-align:center}
+.toast.on{transform:translate(-50%,0); opacity:1}
+
+@media (max-width:860px){
+  .top-in{grid-template-columns:1fr auto; gap:12px 12px}
+  .search{grid-column:1/-1; grid-row:2; max-width:none}
+  .slide{grid-template-columns:1fr; min-height:0; padding:36px 24px 56px}
+  .slide-media{min-height:0; order:-1}
+  .slide-media img{max-height:200px}
+  .slide-word{text-align:left; font-size:56px}
+  .slide:not(.brandslide) .slide-media:not(.has-img){display:none}
+  .cbtn{display:none}
+  .modal{grid-template-columns:1fr; top:auto; bottom:0; left:0; width:100%; max-height:92vh; border-radius:20px 20px 0 0; transform:translateY(100%); overflow-y:auto; padding-bottom:env(safe-area-inset-bottom,0px)}
+  .modal.open{transform:none}
+  .m-media{min-height:260px}
+  .m-media img{max-height:300px}
+  .row2{grid-template-columns:1fr}
+}
+@media (max-width:520px){
+  .grid{grid-template-columns:1fr 1fr; gap:10px}
+  .card-body{padding:12px 12px 14px}
+  .card-name{font-size:14px}
+  .price .now{font-size:17px}
+  .iconbtn .lbl-txt{display:none}
+  .mark b{font-size:20px}
+  .section{padding-top:56px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:1ms!important; animation-iteration-count:1!important; transition-duration:1ms!important}
+  .sk::after{display:none}
+}
+</style>
+
+</head>
+<body>
+<div class="awning" aria-hidden="true"></div>
+<header class="top">
+  <div class="wrap">
+    <div class="top-in">
+      <a class="mark" href="index.html" id="home" aria-label="Purafarma, inicio"><b>PURAFARMA</b><span><span class="n">FARMACIAS Y PERFUMERÍAS</span><span class="s">SPORT</span></span></a>
+      <label class="search"><span class="sr">Buscar productos</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <input id="q" type="search" placeholder="Buscá productos, marcas o categorías" autocomplete="off">
+      </label>
+      <div class="actions">
+        <button class="iconbtn dark" id="cartBtn" aria-label="Abrir carrito"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.2 11.1a2 2 0 0 1-2 1.9H8.2a2 2 0 0 1-2-1.9z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span class="lbl-txt">Carrito</span><span class="badge num" id="cartCount" hidden>0</span></button>
+      </div>
+    </div>
+    <nav class="cats" id="cats" aria-label="Categorías"></nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero wrap" aria-label="Promociones">
+    <h1 class="sr">Purafarma, farmacias y perfumerías: tienda online</h1>
+    <div class="carousel" id="carousel">
+      <div class="track" id="track"></div>
+      <button class="cbtn prev" id="prev" aria-label="Banner anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m15 18-6-6 6-6"/></svg></button>
+      <button class="cbtn next" id="next" aria-label="Banner siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m9 18 6-6-6-6"/></svg></button>
+      <div class="dots" id="dots"></div>
+    </div>
+  </section>
+
+  <section class="section wrap" id="brandsSec" aria-labelledby="brandsTitle">
+    <div class="sec-head"><div><h2 id="brandsTitle">Marcas</h2><p>Elegí una marca para ver todos sus productos.</p></div></div>
+    <div class="brands" id="brands"></div>
+  </section>
+
+  <section class="section wrap" id="catalog" aria-labelledby="catTitle">
+    <div class="sec-head">
+      <div><h2 id="catTitle">Todos los productos</h2><p id="catCount" class="num"></p></div>
+      <div class="toolbar">
+        <label class="sr" for="sort">Ordenar</label>
+        <select class="select" id="sort">
+          <option value="dest">Destacados</option>
+          <option value="asc">Menor precio</option>
+          <option value="desc">Mayor precio</option>
+          <option value="off">Mayor descuento</option>
+          <option value="az">Nombre A–Z</option>
+        </select>
+      </div>
+    </div>
+    <div class="active-filters" id="activeFilters"></div>
+    <div class="grid" id="grid"></div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div class="foot-word" aria-hidden="true">PURAFARMA</div>
+    <div class="foot-cols">
+      <div><h3>Farmacias y perfumerías</h3><p>Mar del Plata</p><p>Instagram: @purafarma.ok</p></div>
+      <div><h3>Categorías</h3><div id="footCats"></div></div>
+      <div><h3>Tu compra</h3><button id="footCart">Ver carrito</button><p>Los precios pueden variar sin previo aviso.</p></div>
+    </div>
+    <small>© Purafarma Farmacias</small>
+  </div>
+</footer>
+
+<div class="scrim" id="scrim"></div>
+
+<aside class="drawer" id="cart" role="dialog" aria-modal="true" aria-labelledby="cartTitle">
+  <div class="d-head"><h2 id="cartTitle">Tu carrito</h2><button class="close" data-close aria-label="Cerrar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button></div>
+  <div class="d-body" id="cartBody"></div>
+  <div class="d-foot" id="cartFoot"></div>
+</aside>
+
+<div class="modal" id="pmodal" role="dialog" aria-modal="true" aria-label="Detalle del producto"></div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="packshot.js"></script>
+<script>
+(() => {
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const slug = s => String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
+const money = n => "$ " + Math.round(Number(n)||0).toLocaleString("es-AR");
+
+const CATS = [
+  {id:"dermocosmetica", label:"Dermocosmética"},
+  {id:"perfumeria", label:"Perfumería"},
+  {id:"cuidado-personal", label:"Cuidado personal"},
+  {id:"nutricion-deportiva", label:"Nutrición deportiva"},
+  {id:"maternidad-bebe", label:"Maternidad y bebé"},
+  {id:"farmacia", label:"Farmacia"},
+];
+const catLabel = id => (CATS.find(c => c.id === id) || {}).label || (id ? id.replace(/-/g," ").replace(/^./, m => m.toUpperCase()) : "");
+const normCat = v => { const s = slug(v); const hit = CATS.find(c => c.id === s || slug(c.label) === s || s.startsWith(c.id.split("-")[0])); return hit ? hit.id : s; };
+
+const ICON = {
+  minus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14"/></svg>',
+  plus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+  x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>',
+};
+// Siluetas por categoría para productos sin foto
+const SHAPE = {
+  "dermocosmetica":'<svg viewBox="0 0 100 140"><rect x="38" y="6" width="24" height="20" rx="4" fill="currentColor" opacity=".55"/><path d="M30 26h40l6 104a6 6 0 0 1-6 6H30a6 6 0 0 1-6-6z" fill="currentColor" opacity=".3"/><rect x="34" y="64" width="32" height="30" rx="3" fill="currentColor" opacity=".35"/></svg>',
+  "perfumeria":'<svg viewBox="0 0 100 140"><rect x="42" y="6" width="16" height="16" rx="3" fill="currentColor" opacity=".55"/><rect x="38" y="22" width="24" height="12" fill="currentColor" opacity=".4"/><rect x="18" y="34" width="64" height="98" rx="14" fill="currentColor" opacity=".3"/><rect x="32" y="66" width="36" height="28" rx="3" fill="currentColor" opacity=".35"/></svg>',
+  "nutricion-deportiva":'<svg viewBox="0 0 100 140"><rect x="22" y="14" width="56" height="20" rx="5" fill="currentColor" opacity=".55"/><rect x="16" y="34" width="68" height="98" rx="10" fill="currentColor" opacity=".3"/><rect x="16" y="62" width="68" height="34" fill="currentColor" opacity=".3"/></svg>',
+  "maternidad-bebe":'<svg viewBox="0 0 100 140"><path d="M38 6h24l4 22H34z" fill="currentColor" opacity=".55"/><rect x="28" y="28" width="44" height="12" rx="4" fill="currentColor" opacity=".45"/><rect x="26" y="40" width="48" height="92" rx="16" fill="currentColor" opacity=".3"/><path d="M26 76h48M26 96h48" stroke="currentColor" stroke-width="3" opacity=".35"/></svg>',
+  "farmacia":'<svg viewBox="0 0 100 140"><rect x="12" y="30" width="76" height="96" rx="6" fill="currentColor" opacity=".3"/><rect x="12" y="30" width="76" height="20" fill="currentColor" opacity=".2"/><path d="M50 70v32M34 86h32" stroke="currentColor" stroke-width="8" stroke-linecap="round" opacity=".55"/></svg>',
+  "cuidado-personal":'<svg viewBox="0 0 100 140"><rect x="44" y="6" width="12" height="18" rx="3" fill="currentColor" opacity=".55"/><path d="M32 24h36v8l8 10v84a8 8 0 0 1-8 8H32a8 8 0 0 1-8-8V42l8-10z" fill="currentColor" opacity=".3"/><rect x="34" y="70" width="32" height="26" rx="3" fill="currentColor" opacity=".35"/></svg>',
+};
+const imgSrc = p => p && p.imagenId ? "/_blob/" + p.imagenId : (p && p.imagen) || "";
+const media = (p, alt) => { const s = imgSrc(p); return s ? `<img src="${esc(s)}" alt="${esc(alt ?? p.nombre)}" loading="lazy" decoding="async">` : `<div class="ph" aria-hidden="true">${window.Packshot ? Packshot.svg(p) : (SHAPE[p.categoria] || SHAPE["cuidado-personal"])}</div>`; };
+const off = p => p.precioAnterior > p.precio ? Math.round((1 - p.precio / p.precioAnterior) * 100) : 0;
+
+/* ---------- Estado ---------- */
+const S = { products: [], banners: [], loaded: false, db: null,
+  f: { cat: null, brand: null, q: "" }, sort: "dest", cart: {}, slide: 0, animateGrid: true };
+try { S.cart = JSON.parse(localStorage.getItem("pf-cart") || "{}") || {}; } catch (e) { S.cart = {}; }
+const saveCart = () => { try { localStorage.setItem("pf-cart", JSON.stringify(S.cart)); } catch (e) {} };
+const byId = id => S.products.find(p => p.id === id);
+
+/* ---------- Toast ---------- */
+let tt; const toast = msg => { const t = $("#toast"); t.textContent = msg; t.classList.add("on"); clearTimeout(tt); tt = setTimeout(() => t.classList.remove("on"), 2200); };
+
+/* ---------- Categorías ---------- */
+function renderCats(){
+  const extra = [...new Set(S.products.map(p => p.categoria).filter(c => c && !CATS.some(k => k.id === c)))];
+  const all = [{id:null, label:"Todo"}, ...CATS, ...extra.map(id => ({id, label:catLabel(id)}))];
+  $("#cats").innerHTML = all.map(c => `<button class="chip" data-cat="${c.id ?? ""}" aria-pressed="${S.f.cat === c.id}">${esc(c.label)}</button>`).join("");
+  $("#footCats").innerHTML = CATS.map(c => `<button data-cat="${c.id}">${esc(c.label)}</button>`).join("");
+}
+document.addEventListener("click", e => {
+  const c = e.target.closest("[data-cat]"); if (!c) return;
+  const id = c.dataset.cat || null;
+  setFilter({ cat: S.f.cat === id && id ? null : id });
+  if (c.closest("footer") || c.closest(".slide")) scrollToCatalog();
+});
+function scrollToCatalog(){ $("#catalog").scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" }); }
+function applySport(){ document.documentElement.toggleAttribute("data-sport", S.f.cat === "nutricion-deportiva"); }
+function setFilter(patch){
+  Object.assign(S.f, patch); S.animateGrid = true;
+  try { history.replaceState(null, "", S.f.cat ? "#" + S.f.cat : location.pathname); } catch (e) {}
+  applySport(); renderCats(); renderBrands(); renderGrid();
+}
+
+/* ---------- Banners ---------- */
+const lum = hex => { const m = /^#?([0-9a-f]{6})$/i.exec(hex||""); if (!m) return 1; const n = parseInt(m[1],16); const ch = [n>>16, n>>8&255, n&255].map(v => { v/=255; return v<=.03928 ? v/12.92 : ((v+.055)/1.055)**2.4; }); return .2126*ch[0]+.7152*ch[1]+.0722*ch[2]; };
+function bannerList(){ return S.banners.filter(b => b.activo !== false).sort((a,b) => (a.orden||0)-(b.orden||0)); }
+function renderBanners(){
+  const list = bannerList();
+  let html;
+  if (!list.length){
+    html = `<div class="slide brandslide" style="background:var(--surface);color:var(--ink)">
+      <div><p class="s-brand">Farmacias y perfumerías</p><h2>Tu farmacia de confianza, ahora online.</h2><p class="s-sub">Dermocosmética, perfumería, nutrición deportiva y todo para tu bebé, en un solo carrito.</p><div class="s-cta"><button class="btn btn-pink" data-goto="catalog">Ver productos</button></div></div>
+      <div class="slide-media"><div class="slide-word">PURA<br>FARMA</div></div></div>`;
+  } else {
+    html = list.map((b, i) => {
+      const bg = b.color || "#121110"; const dark = lum(bg) < .35;
+      const fg = dark ? "#FFFFFF" : "#121110";
+      const btn = dark ? `style="background:#fff;color:#121110"` : `style="background:#121110;color:#fff"`;
+      const target = b.marca ? `data-brand="${esc(b.marca)}"` : b.categoria ? `data-cat="${esc(b.categoria)}"` : `data-goto="catalog"`;
+      const s = b.imagenId ? "/_blob/" + b.imagenId : "";
+      return `<div class="slide" style="background:${esc(bg)};color:${fg}" role="group" aria-roledescription="banner" aria-label="${i+1} de ${list.length}">
+        <div>${b.marca ? `<p class="s-brand">${esc(b.marca)}</p>` : ""}<h2>${esc(b.titulo || b.marca || "")}</h2>${b.bajada ? `<p class="s-sub">${esc(b.bajada)}</p>` : ""}
+        <div class="s-cta"><button class="btn" ${btn} ${target}>${esc(b.cta || "Ver productos")}</button></div></div>
+        <div class="slide-media ${s ? "has-img" : ""}">${s ? `<img src="${esc(s)}" alt="${esc(b.marca || b.titulo || "")}">` : `<div class="slide-word">${esc(b.marca || "Purafarma")}</div>`}</div></div>`;
+    }).join("");
+  }
+  $("#track").innerHTML = html;
+  const n = Math.max(1, list.length);
+  S.slide = Math.min(S.slide, n - 1);
+  const dotColor = list[S.slide] ? (lum(list[S.slide].color) < .35 ? "#fff" : "#121110") : "var(--ink)";
+  $("#dots").style.color = dotColor;
+  $("#dots").innerHTML = n > 1 ? list.map((_, i) => `<button class="dot" data-dot="${i}" aria-label="Ir al banner ${i+1}" aria-current="${i===S.slide}"></button>`).join("") : "";
+  $("#prev").hidden = $("#next").hidden = n < 2;
+  goSlide(S.slide, true);
+}
+function goSlide(i, instant){
+  const n = Math.max(1, bannerList().length); S.slide = (i + n) % n;
+  const tr = $("#track"); if (instant) tr.classList.add("dragging");
+  tr.style.transform = `translateX(${-S.slide * 100}%)`;
+  if (instant) requestAnimationFrame(() => tr.classList.remove("dragging"));
+  document.querySelectorAll(".dot").forEach((d, k) => d.setAttribute("aria-current", k === S.slide));
+  const b = bannerList()[S.slide]; if (b) $("#dots").style.color = lum(b.color) < .35 ? "#fff" : "#121110";
+}
+$("#prev").onclick = () => { goSlide(S.slide - 1); restartAuto(); };
+$("#next").onclick = () => { goSlide(S.slide + 1); restartAuto(); };
+$("#dots").onclick = e => { const d = e.target.closest("[data-dot]"); if (d){ goSlide(+d.dataset.dot); restartAuto(); } };
+let auto, paused = false;
+function restartAuto(){ clearInterval(auto); if (matchMedia("(prefers-reduced-motion: reduce)").matches) return; auto = setInterval(() => { if (!paused && !document.hidden && bannerList().length > 1) goSlide(S.slide + 1); }, 6500); }
+const car = $("#carousel");
+car.addEventListener("mouseenter", () => paused = true); car.addEventListener("mouseleave", () => paused = false);
+car.addEventListener("focusin", () => paused = true); car.addEventListener("focusout", () => paused = false);
+// Swipe con velocidad
+let drag = null;
+car.addEventListener("pointerdown", e => { if (e.pointerType === "mouse" || bannerList().length < 2 || drag) return; drag = { x: e.clientX, y: e.clientY, t: Date.now(), id: e.pointerId, moved: false }; });
+car.addEventListener("pointermove", e => {
+  if (!drag || e.pointerId !== drag.id) return;
+  const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+  if (!drag.moved && Math.abs(dy) > Math.abs(dx)) { drag = null; return; }
+  drag.moved = true; drag.dx = dx; const tr = $("#track"); tr.classList.add("dragging");
+  const n = bannerList().length; const edge = (S.slide === 0 && dx > 0) || (S.slide === n - 1 && dx < 0);
+  tr.style.transform = `translateX(calc(${-S.slide * 100}% + ${edge ? dx * .3 : dx}px))`;
+});
+const endDrag = e => { if (!drag) return; const tr = $("#track"); tr.classList.remove("dragging");
+  const dx = drag.dx || 0, v = Math.abs(dx) / Math.max(1, Date.now() - drag.t);
+  if (Math.abs(dx) > car.clientWidth * .2 || v > .11 && Math.abs(dx) > 12) goSlide(S.slide + (dx < 0 ? 1 : -1)); else goSlide(S.slide);
+  drag = null; restartAuto(); };
+car.addEventListener("pointerup", endDrag); car.addEventListener("pointercancel", endDrag);
+document.addEventListener("click", e => { const g = e.target.closest("[data-goto]"); if (g) scrollToCatalog(); });
+
+/* ---------- Marcas ---------- */
+function renderBrands(){
+  const counts = {}; S.products.forEach(p => { if (p.marca) counts[p.marca] = (counts[p.marca]||0) + 1; });
+  const names = Object.keys(counts).sort((a,b) => counts[b]-counts[a] || a.localeCompare(b));
+  $("#brandsSec").hidden = !names.length;
+  $("#brands").innerHTML = names.map(m => `<button class="brandpill" data-brand="${esc(m)}" aria-pressed="${S.f.brand === m}"><b>${esc(m)}</b><small class="num">${counts[m]} ${counts[m]===1?"producto":"productos"}</small></button>`).join("");
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-brand]"); if (!b) return;
+  const m = b.dataset.brand; setFilter({ brand: S.f.brand === m && !b.closest(".slide") ? null : m });
+  if (b.closest(".slide")) scrollToCatalog();
+});
+
+/* ---------- Catálogo ---------- */
+function filtered(){
+  const q = slug(S.f.q);
+  let list = S.products.filter(p =>
+    (!S.f.cat || p.categoria === S.f.cat) && (!S.f.brand || p.marca === S.f.brand) &&
+    (!q || slug([p.nombre, p.marca, catLabel(p.categoria), p.codigo].join(" ")).includes(q)));
+  const by = {
+    dest: (a,b) => (b.destacado?1:0)-(a.destacado?1:0) || (b.creado||0)-(a.creado||0),
+    asc: (a,b) => a.precio-b.precio, desc: (a,b) => b.precio-a.precio,
+    off: (a,b) => off(b)-off(a), az: (a,b) => String(a.nombre).localeCompare(String(b.nombre), "es"),
+  }[S.sort];
+  return list.sort(by);
+}
+function buyHTML(p){
+  if ((p.stock ?? 1) <= 0) return `<div class="nostock">Sin stock</div>`;
+  const q = S.cart[p.id] || 0;
+  return q ? `<div class="stepper" role="group" aria-label="Cantidad de ${esc(p.nombre)}"><button data-dec="${p.id}" aria-label="Quitar uno">${ICON.minus}</button><output class="num">${q}</output><button data-inc="${p.id}" aria-label="Agregar uno">${ICON.plus}</button></div>`
+           : `<button class="btn btn-pink" data-inc="${p.id}">Agregar</button>`;
+}
+function cardHTML(p, i){
+  const o = off(p);
+  return `<article class="card ${S.animateGrid && i < 16 ? "rise" : ""}" style="--i:${i}" data-card="${p.id}">
+    <button class="card-media" data-open="${p.id}" aria-label="Ver ${esc(p.nombre)}">${media(p, "")}${o ? `<span class="off num">−${o}%</span>` : ""}</button>
+    <div class="card-body">
+      <p class="card-brand">${esc(p.marca || "")}</p>
+      <h3><button class="card-name" data-open="${p.id}">${esc(p.nombre)}</button></h3>
+      <div class="price num"><span class="now">${money(p.precio)}</span>${o ? `<s>${money(p.precioAnterior)}</s>` : ""}</div>
+      <div class="buy" data-buy="${p.id}">${buyHTML(p)}</div>
+    </div></article>`;
+}
+function renderGrid(){
+  const g = $("#grid");
+  const title = S.f.brand && S.f.cat ? `${S.f.brand} en ${catLabel(S.f.cat)}` : S.f.brand || (S.f.cat ? catLabel(S.f.cat) : "Todos los productos");
+  $("#catTitle").textContent = S.f.q ? `Resultados para “${S.f.q}”` : title;
+  const af = [];
+  if (S.f.cat) af.push(`<span class="tag">${esc(catLabel(S.f.cat))}<button data-clear="cat" aria-label="Quitar categoría">${ICON.x}</button></span>`);
+  if (S.f.brand) af.push(`<span class="tag">${esc(S.f.brand)}<button data-clear="brand" aria-label="Quitar marca">${ICON.x}</button></span>`);
+  if (S.f.q) af.push(`<span class="tag">“${esc(S.f.q)}”<button data-clear="q" aria-label="Quitar búsqueda">${ICON.x}</button></span>`);
+  $("#activeFilters").innerHTML = af.join("");
+  if (!S.loaded){ $("#catCount").textContent = "Cargando catálogo…"; g.innerHTML = Array.from({length:8}, () => `<div class="sk"></div>`).join(""); return; }
+  const list = filtered();
+  $("#catCount").textContent = S.products.length ? `${list.length} ${list.length === 1 ? "producto" : "productos"}` : "";
+  if (!S.products.length){
+    g.innerHTML = `<div class="empty"><h3>Estamos armando el catálogo</h3><p>Muy pronto vas a encontrar acá dermocosmética, perfumería, nutrición deportiva y productos para tu bebé.</p></div>`;
+  } else if (!list.length){
+    g.innerHTML = `<div class="empty"><h3>No encontramos productos con esos filtros</h3><p>Probá con otra búsqueda o mirá todo el catálogo.</p><button class="btn btn-ink" data-clear="all">Ver todo</button></div>`;
+  } else g.innerHTML = list.map(cardHTML).join("");
+  S.animateGrid = false;
+}
+document.addEventListener("click", e => {
+  const c = e.target.closest("[data-clear]"); if (!c) return;
+  const k = c.dataset.clear;
+  if (k === "all"){ $("#q").value = ""; setFilter({ cat:null, brand:null, q:"" }); }
+  else { if (k === "q") $("#q").value = ""; setFilter({ [k]: k === "q" ? "" : null }); }
+});
+let qt; $("#q").addEventListener("input", e => { clearTimeout(qt); qt = setTimeout(() => { setFilter({ q: e.target.value.trim() }); }, 160); });
+$("#q").addEventListener("keydown", e => { if (e.key === "Enter") scrollToCatalog(); });
+$("#sort").onchange = e => { S.sort = e.target.value; S.animateGrid = true; renderGrid(); };
+
+
+/* ---------- Carrito ---------- */
+function setQty(id, q){
+  const p = byId(id); if (!p) return;
+  const max = p.stock > 0 ? p.stock : 99;
+  q = Math.max(0, Math.min(q, max));
+  const before = S.cart[id] || 0;
+  if (q === before && q === max && q > 0) toast(`Hay ${max} unidades disponibles`);
+  if (q) S.cart[id] = q; else delete S.cart[id];
+  saveCart(); updateBuy(id, before === 0 || q === 0); updateCount(q > before); renderCart(); refreshModalBuy(id);
+}
+function updateBuy(id, swap){
+  document.querySelectorAll(`[data-buy="${CSS.escape(id)}"]`).forEach(el => {
+    const p = byId(id); if (!p) return;
+    el.innerHTML = buyHTML(p);
+    if (swap){ el.firstElementChild?.classList.add("swap"); const f = el.querySelector("button"); }
+  });
+}
+function updateCount(bump){
+  const n = Object.entries(S.cart).reduce((a,[id,q]) => a + (S.products.length && !byId(id) ? 0 : q), 0);
+  const b = $("#cartCount"); b.textContent = n; b.hidden = !n;
+  if (bump){ b.classList.remove("bump"); void b.offsetWidth; b.classList.add("bump"); }
+}
+document.addEventListener("click", e => {
+  const inc = e.target.closest("[data-inc]"), dec = e.target.closest("[data-dec]"), rm = e.target.closest("[data-rm]");
+  if (inc){ const id = inc.dataset.inc; const was = S.cart[id] || 0; setQty(id, was + 1); if (!was && !inc.closest(".drawer")) toast(`Agregaste ${byId(id)?.nombre ?? "el producto"}`); }
+  else if (dec) setQty(dec.dataset.dec, (S.cart[dec.dataset.dec] || 0) - 1);
+  else if (rm) setQty(rm.dataset.rm, 0);
+});
+let step = "cart", lastOrder = "";
+function cartItems(){ return Object.entries(S.cart).map(([id,q]) => ({ p: byId(id), q })).filter(x => x.p); }
+function renderCart(){
+  const items = cartItems(); const total = items.reduce((a,x) => a + x.p.precio * x.q, 0);
+  const body = $("#cartBody"), foot = $("#cartFoot");
+  if (step === "cart"){
+    $("#cartTitle").textContent = "Tu carrito";
+    if (!items.length){ body.innerHTML = `<div class="empty" style="margin-top:8px"><h3>Tu carrito está vacío</h3><p>Sumá productos desde el catálogo y aparecen acá.</p><button class="btn btn-ink" data-close data-goto="catalog">Ver productos</button></div>`; foot.hidden = true; return; }
+    foot.hidden = false;
+    const inCart = new Set(items.map(x => x.p.id)), brands = new Set(items.map(x => x.p.marca)), cats = new Set(items.map(x => x.p.categoria));
+    const ups = S.products.filter(p => !inCart.has(p.id) && (p.stock ?? 1) > 0)
+      .map(p => ({ p, s: (brands.has(p.marca) ? 2 : 0) + (cats.has(p.categoria) ? 1 : 0) + (p.destacado ? .5 : 0) }))
+      .filter(x => x.s > 0).sort((a,b) => b.s - a.s).slice(0,3).map(x => x.p);
+    body.innerHTML = items.map(({p,q}) => `<div class="line">
+        <div class="thumb">${media(p, "")}</div>
+        <div class="line-info"><p class="card-brand">${esc(p.marca||"")}</p><p class="n">${esc(p.nombre)}</p><p class="num" style="font-size:13px;color:var(--ink-2)">${money(p.precio)} c/u</p></div>
+        <div class="line-ctrl"><span class="sum num">${money(p.precio*q)}</span>
+          <div class="stepper light" role="group" aria-label="Cantidad"><button data-dec="${p.id}" aria-label="Quitar uno">${ICON.minus}</button><output class="num">${q}</output><button data-inc="${p.id}" aria-label="Agregar uno">${ICON.plus}</button></div></div>
+      </div>`).join("") +
+      (ups.length ? `<div class="upsell"><h3>Completá tu rutina</h3><p>Productos que suelen llevarse juntos con lo que elegiste.</p>${ups.map(p => `<div class="up"><div class="thumb">${media(p,"")}</div><div><p>${esc(p.nombre)}</p><p class="p num">${money(p.precio)}</p></div><button class="plus" data-inc="${p.id}" aria-label="Sumar ${esc(p.nombre)}">${ICON.plus}</button></div>`).join("")}</div>` : "");
+    foot.innerHTML = `<div class="totrow"><span>Subtotal</span><b class="num">${money(total)}</b></div><button class="btn btn-pink" id="toCheckout">Finalizar pedido</button>`;
+    $("#toCheckout").onclick = () => { step = "form"; renderCart(); };
+  } else if (step === "form"){
+    $("#cartTitle").textContent = "Tus datos";
+    if (!items.length){ step = "cart"; return renderCart(); }
+    const saved = (() => { try { return JSON.parse(localStorage.getItem("pf-buyer") || "{}"); } catch (e) { return {}; } })();
+    body.innerHTML = `<form class="form" id="coForm" novalidate>
+      <div class="field"><label for="co-nombre">Nombre y apellido</label><input id="co-nombre" required value="${esc(saved.nombre||"")}" autocomplete="name"></div>
+      <div class="field"><label for="co-tel">Teléfono</label><input id="co-tel" type="tel" required value="${esc(saved.tel||"")}" autocomplete="tel" placeholder="223 …"></div>
+      <div class="field"><span class="lbl">Entrega</span><div class="seg" role="group"><button type="button" data-ent="retiro" aria-pressed="${saved.ent !== "envio"}">Retiro en farmacia</button><button type="button" data-ent="envio" aria-pressed="${saved.ent === "envio"}">Envío a domicilio</button></div></div>
+      <div class="field" id="dirField" ${saved.ent === "envio" ? "" : "hidden"}><label for="co-dir">Dirección</label><input id="co-dir" value="${esc(saved.dir||"")}" autocomplete="street-address" placeholder="Calle, número, piso"></div>
+      <div class="field"><label for="co-notas">Notas (opcional)</label><textarea id="co-notas" placeholder="Horario de entrega, receta, aclaraciones"></textarea></div>
+      <p id="coErr" style="color:var(--pink);font-size:14px" hidden></p></form>`;
+    let ent = saved.ent === "envio" ? "envio" : "retiro";
+    body.querySelectorAll("[data-ent]").forEach(b => b.onclick = () => { ent = b.dataset.ent; body.querySelectorAll("[data-ent]").forEach(x => x.setAttribute("aria-pressed", x === b)); $("#dirField").hidden = ent !== "envio"; });
+    foot.innerHTML = `<div class="totrow"><span>Total</span><b class="num">${money(total)}</b></div><div style="display:grid;grid-template-columns:auto 1fr;gap:10px"><button class="btn btn-ghost" id="coBack">Volver</button><button class="btn btn-pink" id="coSend">Confirmar pedido</button></div>`;
+    $("#coBack").onclick = () => { step = "cart"; renderCart(); };
+    const submit = ev => { ev?.preventDefault();
+      const v = id => $(id).value.trim(); const err = $("#coErr");
+      if (!v("#co-nombre") || !v("#co-tel") || (ent === "envio" && !v("#co-dir"))){ err.textContent = ent === "envio" && !v("#co-dir") && v("#co-nombre") && v("#co-tel") ? "Falta la dirección de entrega." : "Completá tu nombre y un teléfono para que podamos confirmar el pedido."; err.hidden = false; return; }
+      try { localStorage.setItem("pf-buyer", JSON.stringify({ nombre:v("#co-nombre"), tel:v("#co-tel"), ent, dir:v("#co-dir") })); } catch (e) {}
+      lastOrder = ["Pedido Purafarma", "", ...items.map(({p,q}) => `• ${q} × ${p.nombre}${p.marca ? " (" + p.marca + ")" : ""} — ${money(p.precio*q)}`), "", `Total: ${money(total)}`, `Nombre: ${v("#co-nombre")}`, `Teléfono: ${v("#co-tel")}`, `Entrega: ${ent === "envio" ? "Envío a " + v("#co-dir") : "Retiro en farmacia"}`, v("#co-notas") ? `Notas: ${v("#co-notas")}` : ""].filter((l,i,a) => l || a[i-1]).join("\n").trim();
+      step = "done"; renderCart(); };
+    $("#coForm").onsubmit = submit; $("#coSend").onclick = submit;
+  } else {
+    $("#cartTitle").textContent = "Pedido listo";
+    body.innerHTML = `<div class="done"><div class="ok">${ICON.check}</div><h3>¡Tu pedido está armado!</h3><p>Copiá el resumen y envialo por WhatsApp a la farmacia para coordinar el pago y la entrega.</p><pre class="order num" id="orderText">${esc(lastOrder)}</pre></div>`;
+    foot.innerHTML = `<button class="btn btn-pink" id="copyOrder">Copiar pedido</button><button class="btn btn-ghost" id="newOrder">Empezar un pedido nuevo</button>`;
+    $("#copyOrder").onclick = async () => { try { await navigator.clipboard.writeText(lastOrder); toast("Pedido copiado"); } catch (e) { const r = document.createRange(); r.selectNodeContents($("#orderText")); const s = getSelection(); s.removeAllRanges(); s.addRange(r); toast("Seleccioná y copiá el texto"); } };
+    $("#newOrder").onclick = () => { S.cart = {}; saveCart(); updateCount(); step = "cart"; S.products.forEach(p => updateBuy(p.id)); renderCart(); };
+  }
+}
+
+/* ---------- Overlays ---------- */
+let openEl = null, lastFocus = null;
+function openPanel(el){
+  if (openEl && openEl !== el) closePanel(true);
+  lastFocus = document.activeElement; openEl = el;
+  el.classList.add("open"); $("#scrim").classList.add("on"); document.body.classList.add("locked");
+  setTimeout(() => el.querySelector("[data-close], button")?.focus({ preventScroll:true }), 60);
+}
+function closePanel(keepScrim){
+  if (!openEl) return; openEl.classList.remove("open");
+  if (openEl.id === "cart" && step === "done") { step = "cart"; setTimeout(renderCart, 400); }
+  openEl = null;
+  if (!keepScrim){ $("#scrim").classList.remove("on"); document.body.classList.remove("locked"); lastFocus?.focus?.({ preventScroll:true }); }
+}
+$("#scrim").onclick = () => closePanel();
+document.addEventListener("keydown", e => { if (e.key === "Escape") closePanel(); });
+document.addEventListener("click", e => { if (e.target.closest("[data-close]")) closePanel(); });
+$("#cartBtn").onclick = $("#footCart").onclick = () => { renderCart(); openPanel($("#cart")); };
+
+/* ---------- Detalle de producto ---------- */
+let modalId = null;
+function openProduct(id){
+  const p = byId(id); if (!p) return; modalId = id; const o = off(p);
+  const rel = S.products.filter(x => x.id !== id && (x.marca === p.marca || x.categoria === p.categoria)).slice(0,3);
+  const m = $("#pmodal");
+  m.innerHTML = `<button class="close m-close" data-close aria-label="Cerrar">${ICON.x}</button>
+    <div class="m-media">${media(p)}</div>
+    <div class="m-info">
+      <p class="card-brand">${esc(p.marca||"")}${p.categoria ? " · " + esc(catLabel(p.categoria)) : ""}</p>
+      <h2>${esc(p.nombre)}</h2>
+      <div class="price num"><span class="now">${money(p.precio)}</span>${o ? `<s>${money(p.precioAnterior)}</s><span class="off" style="position:static">−${o}%</span>` : ""}</div>
+      <p class="stock ${(p.stock ?? 1) > 0 ? "" : "no"}">${(p.stock ?? 1) > 0 ? (p.stock && p.stock <= 5 ? `Últimas ${p.stock} unidades` : "Disponible") : "Sin stock por el momento"}</p>
+      ${p.descripcion ? `<p class="m-desc">${esc(p.descripcion).replace(/\n/g,"<br>")}</p>` : ""}
+      ${p.codigo ? `<p style="font-size:12.5px;color:var(--ink-2)">Código ${esc(p.codigo)}</p>` : ""}
+      <div class="m-buy buy" data-buy="${p.id}">${buyHTML(p)}</div>
+      ${rel.length ? `<div class="rel"><h3>También te puede interesar</h3>${rel.map(r => `<div class="up"><div class="thumb">${media(r,"")}</div><div><p><button data-open="${r.id}" style="text-align:left">${esc(r.nombre)}</button></p><p class="p num">${money(r.precio)}</p></div><button class="plus" data-inc="${r.id}" aria-label="Sumar ${esc(r.nombre)}">${ICON.plus}</button></div>`).join("")}</div>` : ""}
+    </div>`;
+  openPanel(m);
+}
+function refreshModalBuy(id){ /* updateBuy ya cubre el modal por data-buy */ }
+document.addEventListener("click", e => { const o = e.target.closest("[data-open]"); if (o) openProduct(o.dataset.open); });
+
+/* ---------- Arranque ---------- */
+function renderAll(){ renderCats(); renderBanners(); renderBrands(); renderGrid(); updateCount(); }
+let h = (location.hash || "").slice(1);
+if (CATS.some(c => c.id === h)) S.f.cat = h;
+try { const go = JSON.parse(sessionStorage.getItem("pf-go") || "null"); sessionStorage.removeItem("pf-go");
+  if (go){ if (go.cat) S.f.cat = go.cat; if (go.brand) S.f.brand = go.brand; if (go.q){ S.f.q = go.q; $("#q").value = go.q; } if (go.sort){ S.sort = go.sort; $("#sort").value = go.sort; } S.wantScroll = true; } } catch (e) {}
+applySport(); renderAll(); restartAuto();
+if (h === "carrito") setTimeout(() => { renderCart(); openPanel($("#cart")); }, 300);
+
+
+/* Suscripción en vivo con reintentos y lectura única de respaldo */
+const _unsubs = [];
+addEventListener("pagehide", () => _unsubs.forEach(u => { try { u(); } catch (e) {} }));
+function live(db, path, onData, onFail){
+  let tries = 0, got = false;
+  const once = () => db.collection(path).get().then(s => { got = true; onData(s); }).catch(e => { if (!got && onFail) onFail(e); });
+  const start = () => { try { _unsubs.push(db.collection(path).onSnapshot(s => { got = true; tries = 0; onData(s); }, e => {
+    tries++; if (tries <= 4) setTimeout(start, 700 * tries); else if (!got) once(); })); } catch (e) { once(); } };
+  start();
+  setTimeout(() => { if (!got) once(); }, 5000);
+}
+/* Fuera de claude.ai no hay base de datos en vivo: se leen los JSON de /data */
+async function loadStatic(name){ try { const r = await fetch("data/" + name + ".json", { cache:"no-store" }); if (!r.ok) return null; const a = await r.json(); return { docs: a.map(x => ({ id:x.id, data:() => { const { id, ...rest } = x; return rest; } })) }; } catch (e) { return null; } }
+(async () => {
+  const use = window.claude && window.claude.use ? window.claude.use.bind(window.claude) : null;
+  const db = use ? await Promise.resolve(use("db")).catch(() => null) : null;
+  S.db = db;
+  if (!db){
+    const p = await loadStatic("productos"); if (p) S.products = p.docs.map(d => ({ id:d.id, ...d.data() })).map(x => ({ ...x, precio:Number(x.precio)||0, precioAnterior:Number(x.precioAnterior)||0 }));
+    const b = await loadStatic("banners"); if (b){ S.banners = b.docs.map(d => ({ id:d.id, ...d.data() })); renderBanners(); }
+    S.loaded = true; renderCats(); renderBrands(); renderGrid(); updateCount();
+    if (h === "carrito"){ renderCart(); }
+    return;
+  }
+  let gotP = false;
+  live(db, "productos", snap => {
+    S.products = snap.docs.map(d => ({ id: d.id, ...d.data() })).map(p => ({ ...p, precio: Number(p.precio)||0, precioAnterior: Number(p.precioAnterior)||0 }));
+    if (!gotP){ gotP = true; S.animateGrid = true; }
+    S.loaded = true;
+    renderCats(); renderBrands(); renderGrid(); updateCount();
+    if (S.wantScroll || (h && CATS.some(c => c.id === h))){ S.wantScroll = false; h = ""; setTimeout(scrollToCatalog, 120); }
+    if (openEl?.id === "cart") renderCart();
+  }, () => { S.loaded = true; renderGrid(); });
+  live(db, "banners", snap => {
+    S.banners = snap.docs.map(d => ({ id: d.id, ...d.data() })); renderBanners();
+  }, () => {});
+})();
+})();
+</script>
+
+</body>
+</html>
