@@ -40,11 +40,11 @@ Las páginas eligen la base en este orden:
 | `POST /v1/sincronizar` | admin o clave de Plex | Actualiza productos desde CSV o JSON (`modo=precios` o `completo`) |
 | `GET /v1/sincronizaciones` | admin | Últimas sincronizaciones |
 | `GET /v1/fotos/estado`, `POST /v1/fotos/buscar` | admin | Avance y búsqueda manual de fotos por código de barras |
-| `POST /tareas/fotos` | tarea programada de Neon | Busca fotos de 40 productos por vez (cada 5 minutos) |
+| `POST /tareas/fotos` | tarea programada de Neon | Busca fotos de 40 productos por vez (cada 3 minutos) |
 
 ### Fotos por código de barras
 
-Una tarea programada de Neon (Function Trigger `buscar-fotos`, cada 5 minutos) busca la foto de los productos sin foto en Open Beauty Facts, Open Food Facts y Open Products Facts por su código de barras, la guarda en el bucket `fotos` (`codigos/<codigo>.jpg`) y la asigna. Cada producto queda marcado con `fotoBuscada` para no repetir la búsqueda, y `fotoFuente` dice de dónde vino. Las fotos tienen licencia CC BY-SA: el crédito está en el pie del catálogo.
+Una tarea programada de Neon (Function Trigger `buscar-fotos`, cada 3 minutos) busca la foto de los productos sin foto en Open Beauty Facts, Open Food Facts y Open Products Facts por su código de barras, la guarda en el bucket `fotos` (`codigos/<codigo>.jpg`) y la asigna. Cada producto queda marcado con `fotoBuscada` para no repetir la búsqueda, y `fotoFuente` dice de dónde vino. Las fotos tienen licencia CC BY-SA: el crédito está en el pie del catálogo.
 
 ### Plex
 

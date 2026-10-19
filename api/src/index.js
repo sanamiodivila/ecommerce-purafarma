@@ -3,7 +3,7 @@
    - Escritura, fotos y sincronización: solo administradores con sesión (o el script de Plex con su clave). */
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { Pool } from "pg";
+import { Pool, Client } from "pg";
 import { AwsClient } from "aws4fetch";
 import { attachDatabasePool } from "@neon/functions";
 import { randomBytes, scrypt as _scrypt, createHash, timingSafeEqual } from "node:crypto";
@@ -125,35 +125,45 @@ const espera = ms => new Promise(r => setTimeout(r, ms));
 const LOTE_FOTOS = 40;
 
 async function pedirJSON(url){
-  const r = await fetch(url, { headers: { "User-Agent": AGENTE }, signal: AbortSignal.timeout(15000) });
+  let r;
+  try { r = await fetch(url, { headers: { "User-Agent": AGENTE }, signal: AbortSignal.timeout(15000) }); }
+  catch (e) { throw new Error(`${new URL(url).host}: ${e.cause?.code || e.cause?.message || e.message}`); }
   if (r.status === 404) return null;
   if (r.status === 429) throw Object.assign(new Error("límite de consultas"), { limite: true });
   if (!r.ok) throw new Error(`HTTP ${r.status}`);
   return r.json();
 }
+// Si una fuente falla se sigue con las otras; solo es error si fallaron todas.
 async function buscarFotoDe(codigo){
+  const fallas = [];
   for (const [fuente, base] of FUENTES){
-    const j = await pedirJSON(`${base}/api/v2/product/${codigo}.json?fields=image_front_url,image_url`);
+    let j = null;
+    try { j = await pedirJSON(`${base}/api/v2/product/${codigo}.json?fields=image_front_url,image_url`); }
+    catch (e) { if (e.limite) throw e; fallas.push(e.message); }
     await espera(700);
     const img = j && j.status === 1 && j.product && (j.product.image_front_url || j.product.image_url);
     if (img) return { fuente, img };
   }
+  if (fallas.length === FUENTES.length) throw new Error(fallas.join(" | "));
   return null;
 }
 async function buscarFotos(limite){
-  const cli = await pool.connect();
+  // Conexión directa (sin el pooler) para que el bloqueo de "una búsqueda a la vez" funcione
+  const cli = new Client({ connectionString: process.env.DATABASE_URL_UNPOOLED || process.env.DATABASE_URL });
+  await cli.connect();
   const res = { revisados: 0, encontradas: 0, sin_foto: 0, errores: 0, pendientes: 0, ocupado: false };
   try {
     // Una sola búsqueda a la vez (el trigger y el botón del backoffice pueden coincidir)
     const { rows: [l] } = await cli.query("select pg_try_advisory_lock(778899) as ok");
     if (!l.ok){ res.ocupado = true; return res; }
     try {
-      const { rows } = await cli.query(`select id, data->>'codigo' as codigo from tienda.documentos
+      const { rows } = await cli.query(`select id, data->>'codigo' as codigo, data->>'fotoIntentos' as intentos from tienda.documentos
         where coleccion = 'productos' and coalesce(data->>'imagenId', '') = '' and data->>'fotoBuscada' is null
           and regexp_replace(coalesce(data->>'codigo', ''), '\\s', '', 'g') ~ '^[0-9]{8,14}$'
-        order by (data->>'destacado')::boolean desc nulls last, id limit $1`, [limite]);
+        order by (data->>'destacado')::boolean desc nulls last, length(regexp_replace(data->>'codigo', '\\s', '', 'g')) = 13 desc, id limit $1`, [limite]);
       for (const p of rows){
         const codigo = p.codigo.replace(/\s/g, "");
+        const intentos = Number(p.intentos || 0) + 1;
         let marca = { fotoBuscada: new Date().toISOString() };
         try {
           const hit = await buscarFotoDe(codigo);
@@ -170,7 +180,8 @@ async function buscarFotos(limite){
         } catch (e) {
           if (e.limite){ console.warn("fotos: la fuente pidió esperar; sigo en la próxima tanda"); break; }
           res.errores++; console.warn("fotos:", codigo, e.message);
-          marca = null; // se reintenta en otra tanda
+          // Se reintenta en otra tanda; al tercer error se da por buscado para no trabar la cola
+          if (intentos < 3) marca = { fotoIntentos: intentos };
         }
         // Solo completa la foto si mientras tanto nadie cargó una a mano
         if (marca) await cli.query(`update tienda.documentos set data = data || $2, cambiado_en = now()
@@ -181,7 +192,7 @@ async function buscarFotos(limite){
     const { rows: [q] } = await cli.query(`select count(*) as n from tienda.documentos where coleccion = 'productos'
       and coalesce(data->>'imagenId', '') = '' and data->>'fotoBuscada' is null and regexp_replace(coalesce(data->>'codigo', ''), '\\s', '', 'g') ~ '^[0-9]{8,14}$'`);
     res.pendientes = Number(q.n);
-  } finally { cli.release(); }
+  } finally { await cli.end().catch(() => {}); }
   console.log("fotos:", JSON.stringify(res));
   return res;
 }
