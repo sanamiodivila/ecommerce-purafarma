@@ -309,7 +309,7 @@ function viewProducts(){
   if (!m.querySelector("#pv")){
     m.innerHTML = `<div id="pv">
       <div class="head"><div><h1>Productos</h1><p>Editá precio y stock directo en la tabla: se guarda al salir del campo.</p></div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-ghost btn-sm" id="delEx" hidden></button><button class="btn btn-pink" id="newP"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Nuevo producto</button></div></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-ghost btn-sm" id="delEx" hidden></button><button class="btn btn-ghost btn-sm" data-dl="ejemplo">Descargar ejemplo CSV</button><button class="btn btn-ghost btn-sm" data-dl="catalogo">Exportar catálogo</button><button class="btn btn-pink" id="newP"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>Nuevo producto</button></div></div>
       <div class="stats" id="stats"></div>
       <div class="bar">
         <label class="search"><span class="sr">Buscar</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="pq" type="search" placeholder="Nombre, marca o código" value="${esc(S.q)}"></label>
@@ -577,6 +577,39 @@ function parseCSV(text){
   if (cell || row.length){ row.push(cell); rows.push(row); }
   return rows.filter(r => r.some(x => x.trim()));
 }
+/* Descarga de planillas: ejemplo para importar y catálogo actual */
+const CSV_HEAD = ["codigo","nombre","marca","categoria","precio","precio_anterior","stock","descripcion","destacado"];
+const csvCell = v => { const s = v == null ? "" : String(v); return /[;"\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+const toCSV = rows => [CSV_HEAD, ...rows].map(r => r.map(csvCell).join(";")).join("\r\n");
+function csvEjemplo(){
+  return toCSV([
+    ["7791234500011","Protector solar facial FPS 50 50 ml","Isdin","Dermocosmética","36200","","10","Textura liviana, para uso diario.","si"],
+    ["7791234500028","Crema hidratante corporal 400 ml","Nivea","Cuidado personal","11800","13500","24","",""],
+    ["7791234500035","Whey Protein sabor vainilla 2 lb","Star Nutrition","Nutrición deportiva","42900","","8","Proteína de suero para después de entrenar.",""],
+    ["7791234500042","Eau de toilette 100 ml","Benetton","Perfumería","32400","38000","5","",""],
+    ["7791234500059","Pañales talle G x 36","Pampers","Maternidad y bebé","26400","","14","",""],
+    ["7791234500066","Termómetro digital flexible","Omron","Farmacia","12600","","6","",""],
+  ]);
+}
+function csvCatalogo(){
+  return toCSV([...S.products].sort((a,b) => String(a.nombre).localeCompare(String(b.nombre),"es")).map(p => [p.codigo||"", p.nombre||"", p.marca||"", catLabel(p.categoria), Math.round(p.precio||0), p.precioAnterior ? Math.round(p.precioAnterior) : "", p.stock ?? 0, p.descripcion||"", p.destacado ? "si" : ""]));
+}
+async function downloadText(filename, text){
+  const data = "\uFEFF" + text;
+  const dl = S.downloads;
+  if (dl){
+    try { const r = await dl.save({ filename, data }); if (r && r.status === "saved") toast("Planilla descargada"); }
+    catch (e) { if (e && e.code === "declined") return; if (e && e.code === "rate_limited") return toast("Ya hay una descarga esperando confirmación"); toast("No se pudo descargar desde esta vista"); }
+    return;
+  }
+  try { const url = URL.createObjectURL(new Blob([data], { type:"text/csv;charset=utf-8" })); const a = document.createElement("a"); a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(url), 3000); }
+  catch (e) { toast("No se pudo descargar desde esta vista"); }
+}
+document.addEventListener("click", e => {
+  const d = e.target.closest("[data-dl]"); if (!d) return;
+  if (d.dataset.dl === "ejemplo") downloadText("purafarma-planilla-ejemplo.csv", csvEjemplo());
+  else downloadText("purafarma-catalogo-" + new Date().toISOString().slice(0,10) + ".csv", csvCatalogo());
+});
 const COLS = { codigo:["codigo","cod","ean","sku","codigo-de-barras"], nombre:["nombre","producto","articulo","descripcion-corta"], marca:["marca","laboratorio","lab"],
   categoria:["categoria","rubro","familia"], precio:["precio","precio-venta","pvp","precio-de-venta"], precioAnterior:["precio-anterior","precio-lista","antes"],
   stock:["stock","existencia","cantidad"], descripcion:["descripcion","detalle"], destacado:["destacado"] };
@@ -598,7 +631,7 @@ function mapRows(rows){
 }
 function viewImport(){
   $("#main").innerHTML = `<div class="head"><div><h1>Importar</h1><p>Cargá o actualizá muchos productos de una vez desde una planilla, y asigná fotos en lote.</p></div></div>
-    <section class="panel"><h2>Planilla de productos</h2>
+    <section class="panel"><div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap"><h2>Planilla de productos</h2><div style="display:flex; gap:8px; flex-wrap:wrap"><button class="btn btn-ink btn-sm" data-dl="ejemplo">Descargar planilla de ejemplo</button><button class="btn btn-ghost btn-sm" data-dl="catalogo" style="box-shadow:inset 0 0 0 1.5px var(--line)">Exportar catálogo actual</button></div></div>
       <p>Exportá desde Plex o guardá tu Excel como CSV. La primera fila son los títulos. Solo <b>nombre</b> y <b>precio</b> son obligatorios. Si el código ya existe, el producto se actualiza (precio, stock, datos) y conserva su foto.</p>
       <div class="cols">${["codigo","nombre","marca","categoria","precio","precio_anterior","stock","descripcion","destacado"].map(c => `<code>${c}</code>`).join("")}</div>
       <div class="field"><label for="csvFile">Archivo CSV</label><input type="file" id="csvFile" accept=".csv,.txt,text/csv"></div>
@@ -666,7 +699,8 @@ function live(db, path, onData, onFail){
 (async () => {
   const use = window.claude && window.claude.use ? window.claude.use.bind(window.claude) : null;
   if (!use) return deny("Abrí el backoffice desde claude.ai con la cuenta de Purafarma.");
-  const [db, user, assets] = await Promise.all([use("db"), use("user"), use("assets")].map(p => Promise.resolve(p).catch(() => null)));
+  const [db, user, assets, downloads] = await Promise.all([use("db"), use("user"), use("assets"), use("downloads")].map(p => Promise.resolve(p).catch(() => null)));
+  S.downloads = downloads;
   let can = false; try { can = user ? !!(await user.canEdit()) : false; } catch (e) {}
   if (!db || !can) return deny("Tu usuario no tiene permiso para administrar la tienda. Si sos parte del equipo, pedile al dueño que te comparta la tienda como Editor.");
   S.db = db; S.assets = assets;

@@ -261,9 +261,9 @@ section{position:relative}
 /* Categorías como hojas que se apilan */
 .stack-head{padding-bottom:48px}
 .sheets{position:relative}
-.cat{position:sticky; min-height:86svh; border-radius:28px 28px 0 0; display:grid; grid-template-columns:1fr 1fr; overflow:hidden}
-.cat-text{display:flex; flex-direction:column; justify-content:space-between; gap:32px; padding:22px clamp(20px, 4vw, 56px) clamp(40px, 5vw, 72px) max(var(--gutL), calc((100vw - 1360px) / 2 + 20px))}
-.cat-text h3{font-size:clamp(28px, 3vw, 44px); line-height:1.1; min-height:56px; display:flex; align-items:center}
+.cat{position:sticky; top:var(--t); height:calc(var(--vh, 100svh) - var(--t)); min-height:420px; border-radius:28px 28px 0 0; display:grid; grid-template-columns:1fr 1fr; overflow:hidden}
+.cat-text{display:flex; flex-direction:column; justify-content:space-between; gap:20px; padding:6px clamp(20px, 4vw, 56px) clamp(28px, 4vh, 56px) max(var(--gutL), calc((100vw - 1360px) / 2 + 20px)); min-height:0}
+.cat-text h3{font-size:clamp(26px, 2.6vw, 38px); line-height:1.1; min-height:50px; display:flex; align-items:center; gap:14px; flex-wrap:wrap}
 .cat-text .cnt{font-size:var(--s-small); font-weight:600; opacity:.9}
 .cat-text p{font-size:18px; max-width:40ch}
 .cat-list{list-style:none; margin:0; padding:0; display:grid; gap:12px; max-width:460px}
@@ -272,18 +272,18 @@ section{position:relative}
 .cat-list li span:last-child{font-weight:600; white-space:nowrap}
 .cat-art{display:grid; place-items:center; padding:clamp(32px, 6vw, 80px)}
 .trio{display:flex; align-items:flex-end; justify-content:center}
-.trio > *{height:min(30svh, 290px); width:auto; max-width:46%; object-fit:contain; margin:0 -14px; transition:transform 600ms var(--ease-out)}
-.trio > *:nth-child(2){height:min(38svh, 370px); position:relative; z-index:1}
-.trio > *:only-child{height:min(42svh, 400px)}
+.trio > *{height:min(28svh, 270px); width:auto; max-width:46%; object-fit:contain; margin:0 -14px; transition:transform 600ms var(--ease-out)}
+.trio > *:nth-child(2){height:min(34svh, 330px); position:relative; z-index:1}
+.trio > *:only-child{height:min(36svh, 360px)}
 @media (hover:hover) and (pointer:fine){ .cat:hover .trio > *:nth-child(1){transform:translateX(-10px) rotate(-4deg)} .cat:hover .trio > *:nth-child(2){transform:translateY(-12px)} .cat:hover .trio > *:nth-child(3){transform:translateX(10px) rotate(4deg)} }
-.c1{background:var(--pink-deep); color:var(--white); top:64px}
-.c2{background:var(--ink); color:var(--cream); top:136px}
-.c3{background:#0B0B0B; color:#FFFFFF; top:208px}
+.c1{background:var(--pink-deep); color:var(--white); --t:64px}
+.c2{background:var(--ink); color:var(--cream); --t:120px}
+.c3{background:#0B0B0B; color:#FFFFFF; --t:176px}
 .c3 .btn{background:#FF5000!important; color:#0B0B0B!important}
-.sportmark{display:inline-flex; align-items:center; gap:10px; font-family:"Exo 2", var(--font); font-style:italic; font-weight:800; color:#FF5000; font-size:18px; letter-spacing:.06em; margin-bottom:6px}
-.sportmark::before{content:"PURAFARMA"; font-family:var(--font); font-style:normal; font-weight:600; color:#FFFFFF; font-size:13px; letter-spacing:.12em}
-.c4{background:var(--paper); color:var(--ink); top:280px}
-.c5{background:var(--sand); color:var(--ink); top:352px}
+.sportmark{display:inline-flex; align-items:center; gap:8px; font-family:"Exo 2", var(--font); font-style:italic; font-weight:800; color:#FF5000; font-size:.62em; letter-spacing:.06em}
+.sportmark::before{content:"PURAFARMA"; font-family:var(--font); font-style:normal; font-weight:600; color:#FFFFFF; font-size:.5em; letter-spacing:.12em}
+.c4{background:var(--paper); color:var(--ink); --t:232px}
+.c5{background:var(--sand); color:var(--ink); --t:288px}
 
 /* Cierre */
 .close-grid{display:grid; grid-template-columns:repeat(3, 1fr)}
@@ -325,15 +325,19 @@ footer{background:var(--ink); color:var(--cream); overflow:hidden}
   .intro-top, .show-grid, .rx-grid, .close-in, .foot-row{grid-template-columns:1fr}
   .intro-top .lead{justify-self:start}
   .rx-side{position:static}
-  .cat{grid-template-columns:1fr; min-height:70svh}
+  .cat{grid-template-columns:1fr}
   .cat-art{order:-1; padding:40px 20px 0}
   .trio > *{height:22svh} .trio > *:nth-child(2){height:27svh}
-  .c1{top:52px} .c2{top:104px} .c3{top:156px} .c4{top:208px} .c5{top:260px}
   .cat-text h3{font-size:24px; min-height:48px}
   .close-grid > div:nth-child(1){grid-column:1/-1}
   .close-grid{grid-template-columns:1fr 1fr}
   .close-in .help{justify-self:start}
   .show-grid{min-height:0}
+}
+@media (max-width:900px), (max-height:700px){
+  .cat{position:relative; top:auto; height:auto; min-height:0}
+  .cat + .cat{margin-top:-28px}
+  .cat-text{padding-top:22px}
 }
 @media (max-width:560px){
   .hero-cta{flex-direction:column; align-items:stretch; width:100%; max-width:340px}
@@ -619,6 +623,7 @@ function onScroll(){
   bar.classList.toggle("sport", !!a && a.getBoundingClientRect().top < innerHeight * .5 && (!b || b.getBoundingClientRect().top > innerHeight * .5));
 }
 addEventListener("scroll", onScroll, { passive:true }); onScroll();
+const setVH = () => document.documentElement.style.setProperty("--vh", innerHeight + "px"); addEventListener("resize", setVH); setVH();
 
 /* ---------- Datos ---------- */
 const S = { products:[], banners:[], portada:[], showIdx:0, rx:{ piel:null, foco:null, presu:null } };
@@ -705,7 +710,7 @@ function renderSheets(){
     const items = S.products.filter(p => p.categoria === c.id || (c.id === "farmacia" && p.categoria === "cuidado-personal"));
     const top = [...items].sort((a,b) => (b.destacado?1:0) - (a.destacado?1:0) || off(b) - off(a)).slice(0,3);
     return `<article class="cat ${c.cls}">
-      <div class="cat-text"><div>${c.sport ? `<p class="sportmark">SPORT</p>` : ""}<h3>${esc(c.label)}</h3><p class="cnt num">${items.length ? `${items.length} ${items.length === 1 ? "producto" : "productos"} online` : "Muy pronto online"}</p></div>
+      <div class="cat-text"><div><h3>${esc(c.label)}${c.sport ? `<span class="sportmark">SPORT</span>` : ""}</h3><p class="cnt num">${items.length ? `${items.length} ${items.length === 1 ? "producto" : "productos"} online` : "Muy pronto online"}</p></div>
         <p>${esc(c.text)}</p>
         ${top.length ? `<ul class="cat-list num">${top.map(p => `<li><span>${esc(p.nombre)}</span><span>${money(p.precio)}</span></li>`).join("")}</ul>` : ""}
         <a ${c.sport ? "data-sport " : ""}class="btn ${c.cls === "c2" ? "btn-pink" : c.cls === "c1" ? "btn-light" : "btn-ink"}" href="tienda.html#${c.id}" data-go='${JSON.stringify({ cat:c.id })}' style="justify-self:start; width:fit-content">Ver ${esc(c.label.toLowerCase())} <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
