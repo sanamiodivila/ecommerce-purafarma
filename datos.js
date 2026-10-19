@@ -67,6 +67,8 @@ window.PuraDatos = {
   crearAdmin: (email, nombre, clave) => pedir("/v1/admins", { method: "POST", body: { email, nombre, clave } }),
   quitarAdmin: id => pedir("/v1/admins/" + id, { method: "DELETE" }),
   subirFoto: blob => pedir("/v1/fotos", { method: "POST", body: blob, headers: { "Content-Type": blob.type || "image/jpeg" } }),
+  estadoFotos: () => pedir("/v1/fotos/estado"),
+  buscarFotos: () => pedir("/v1/fotos/buscar", { method: "POST" }),
   sincronizar: (filas, modo, crearNuevos) => pedir("/v1/sincronizar", { method: "POST", body: { filas, modo, crearNuevos } }),
   sincronizaciones: () => pedir("/v1/sincronizaciones"),
 };

@@ -23,7 +23,7 @@ const TIPOS_FOTO = { "image/jpeg": "jpg", "image/png": "png", "image/webp": "web
 /* ---------- Utilidades ---------- */
 const sha256 = s => createHash("sha256").update(s).digest("hex");
 const iguales = (a, b) => { const x = Buffer.from(String(a)), y = Buffer.from(String(b)); return x.length === y.length && timingSafeEqual(x, y); };
-const slug = s => String(s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+const slug = s => String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
 const CATS = [["dermocosmetica", "Dermocosmética"], ["perfumeria", "Perfumería"], ["cuidado-personal", "Cuidado personal"],
   ["nutricion-deportiva", "Nutrición deportiva"], ["maternidad-bebe", "Maternidad y bebé"], ["farmacia", "Farmacia"]];
 const normCat = v => { const s = slug(v); const hit = CATS.find(([id, label]) => id === s || slug(label) === s || s.startsWith(id.split("-")[0])); return hit ? hit[0] : s; };
@@ -94,6 +94,12 @@ app.delete("/v1/datos/:col/:id", soloAdmin, async c => {
 });
 
 /* ---------- Fotos ---------- */
+async function guardarFoto(buf, tipo, key){
+  const url = `${String(process.env.AWS_ENDPOINT_URL_S3).replace(/\/+$/, "")}/${BUCKET}/${key}`;
+  const r = await s3.fetch(url, { method: "PUT", body: buf, headers: { "Content-Type": tipo, "Cache-Control": "public, max-age=31536000, immutable" } });
+  if (!r.ok){ console.error("subida de foto", r.status, await r.text()); throw fuera(502, "No se pudo guardar la foto. Probá de nuevo."); }
+  return url;
+}
 app.post("/v1/fotos", soloAdmin, async c => {
   const tipo = (c.req.header("content-type") || "").split(";")[0].trim().toLowerCase();
   const ext = TIPOS_FOTO[tipo]; if (!ext) throw fuera(415, "Formato de foto no soportado. Usá JPG, PNG o WebP.");
@@ -101,10 +107,99 @@ app.post("/v1/fotos", soloAdmin, async c => {
   if (!buf.length) throw fuera(400, "La foto llegó vacía");
   if (buf.length > FOTO_MAX) throw fuera(413, "La foto pesa más de 8 MB");
   const d = new Date(), key = `${d.getUTCFullYear()}${String(d.getUTCMonth() + 1).padStart(2, "0")}/${randomBytes(9).toString("base64url")}.${ext}`;
-  const url = `${String(process.env.AWS_ENDPOINT_URL_S3).replace(/\/+$/, "")}/${BUCKET}/${key}`;
-  const r = await s3.fetch(url, { method: "PUT", body: buf, headers: { "Content-Type": tipo, "Cache-Control": "public, max-age=31536000, immutable" } });
-  if (!r.ok){ console.error("subida de foto", r.status, await r.text()); throw fuera(502, "No se pudo guardar la foto. Probá de nuevo."); }
+  const url = await guardarFoto(buf, tipo, key);
   return c.json({ id: url, url });
+});
+
+/* ---------- Búsqueda de fotos por código de barras ----------
+   Consulta las bases abiertas de Open Food Facts (belleza, alimentos y otros productos; fotos con licencia CC BY-SA),
+   guarda la foto en el bucket y la asigna al producto. Cada producto se busca una sola vez (queda marcado con fotoBuscada).
+   Corre sola cada pocos minutos (Function Trigger) y también se puede lanzar desde el backoffice. */
+const FUENTES = [
+  ["Open Beauty Facts", "https://world.openbeautyfacts.org"],
+  ["Open Food Facts", "https://world.openfoodfacts.org"],
+  ["Open Products Facts", "https://world.openproductsfacts.org"],
+];
+const AGENTE = "PurafarmaTienda/1.0 (https://sanamiodivila.github.io/ecommerce-purafarma/)";
+const espera = ms => new Promise(r => setTimeout(r, ms));
+const LOTE_FOTOS = 40;
+
+async function pedirJSON(url){
+  const r = await fetch(url, { headers: { "User-Agent": AGENTE }, signal: AbortSignal.timeout(15000) });
+  if (r.status === 404) return null;
+  if (r.status === 429) throw Object.assign(new Error("límite de consultas"), { limite: true });
+  if (!r.ok) throw new Error(`HTTP ${r.status}`);
+  return r.json();
+}
+async function buscarFotoDe(codigo){
+  for (const [fuente, base] of FUENTES){
+    const j = await pedirJSON(`${base}/api/v2/product/${codigo}.json?fields=image_front_url,image_url`);
+    await espera(700);
+    const img = j && j.status === 1 && j.product && (j.product.image_front_url || j.product.image_url);
+    if (img) return { fuente, img };
+  }
+  return null;
+}
+async function buscarFotos(limite){
+  const cli = await pool.connect();
+  const res = { revisados: 0, encontradas: 0, sin_foto: 0, errores: 0, pendientes: 0, ocupado: false };
+  try {
+    // Una sola búsqueda a la vez (el trigger y el botón del backoffice pueden coincidir)
+    const { rows: [l] } = await cli.query("select pg_try_advisory_lock(778899) as ok");
+    if (!l.ok){ res.ocupado = true; return res; }
+    try {
+      const { rows } = await cli.query(`select id, data->>'codigo' as codigo from tienda.documentos
+        where coleccion = 'productos' and coalesce(data->>'imagenId', '') = '' and data->>'fotoBuscada' is null
+          and regexp_replace(coalesce(data->>'codigo', ''), '\\s', '', 'g') ~ '^[0-9]{8,14}$'
+        order by (data->>'destacado')::boolean desc nulls last, id limit $1`, [limite]);
+      for (const p of rows){
+        const codigo = p.codigo.replace(/\s/g, "");
+        let marca = { fotoBuscada: new Date().toISOString() };
+        try {
+          const hit = await buscarFotoDe(codigo);
+          if (hit){
+            const r = await fetch(hit.img, { headers: { "User-Agent": AGENTE }, signal: AbortSignal.timeout(20000) });
+            const tipo = (r.headers.get("content-type") || "").split(";")[0].trim().toLowerCase();
+            const buf = r.ok ? Buffer.from(await r.arrayBuffer()) : null;
+            if (buf && TIPOS_FOTO[tipo] && buf.length > 2000 && buf.length <= FOTO_MAX){
+              const url = await guardarFoto(buf, tipo, `codigos/${codigo}.${TIPOS_FOTO[tipo]}`);
+              marca = { ...marca, imagenId: url, fotoFuente: hit.fuente };
+              res.encontradas++;
+            } else res.sin_foto++;
+          } else res.sin_foto++;
+        } catch (e) {
+          if (e.limite){ console.warn("fotos: la fuente pidió esperar; sigo en la próxima tanda"); break; }
+          res.errores++; console.warn("fotos:", codigo, e.message);
+          marca = null; // se reintenta en otra tanda
+        }
+        // Solo completa la foto si mientras tanto nadie cargó una a mano
+        if (marca) await cli.query(`update tienda.documentos set data = data || $2, cambiado_en = now()
+          where coleccion = 'productos' and id = $1 and coalesce(data->>'imagenId', '') = ''`, [p.id, marca]);
+        res.revisados++;
+      }
+    } finally { await cli.query("select pg_advisory_unlock(778899)"); }
+    const { rows: [q] } = await cli.query(`select count(*) as n from tienda.documentos where coleccion = 'productos'
+      and coalesce(data->>'imagenId', '') = '' and data->>'fotoBuscada' is null and regexp_replace(coalesce(data->>'codigo', ''), '\\s', '', 'g') ~ '^[0-9]{8,14}$'`);
+    res.pendientes = Number(q.n);
+  } finally { cli.release(); }
+  console.log("fotos:", JSON.stringify(res));
+  return res;
+}
+// Llamada programada de Neon (Function Trigger). Neon borra los encabezados X-Neon-* que manda cualquier otro.
+app.post("/tareas/fotos", async c => {
+  if (!c.req.header("x-neon-trigger-invocation-id")) throw fuera(403, "Solo para la tarea programada");
+  return c.json(await buscarFotos(LOTE_FOTOS));
+});
+app.post("/v1/fotos/buscar", soloAdmin, async c => c.json(await buscarFotos(LOTE_FOTOS)));
+app.get("/v1/fotos/estado", soloAdmin, async c => {
+  const { rows: [r] } = await pool.query(`select count(*) as total,
+      count(*) filter (where coalesce(data->>'imagenId', '') <> '') as con_foto,
+      count(*) filter (where data->>'fotoFuente' is not null and coalesce(data->>'imagenId', '') <> '') as automaticas,
+      count(*) filter (where coalesce(data->>'imagenId', '') = '' and data->>'fotoBuscada' is not null) as no_encontradas,
+      count(*) filter (where coalesce(data->>'imagenId', '') = '' and data->>'fotoBuscada' is null
+        and regexp_replace(coalesce(data->>'codigo', ''), '\\s', '', 'g') ~ '^[0-9]{8,14}$') as pendientes
+    from tienda.documentos where coleccion = 'productos'`);
+  return c.json(Object.fromEntries(Object.entries(r).map(([k, v]) => [k, Number(v)])));
 });
 
 /* ---------- Ingreso ---------- */
@@ -162,7 +257,7 @@ app.delete("/v1/admins/:id", soloAdmin, async c => {
    modo "precios": solo actualiza precio, precio anterior y stock de productos que ya existen (lo que usa el script de Plex).
    modo "completo": además actualiza nombre, marca, categoría, etc. y crea los productos nuevos (lo que usa la planilla del backoffice). */
 function parseCSV(text){
-  text = String(text).replace(/^﻿/, "");
+  text = String(text).replace(/^\uFEFF/, "");
   const first = text.split(/\r?\n/)[0] || ""; const d = first.includes("\t") ? "\t" : (first.match(/;/g) || []).length > (first.match(/,/g) || []).length ? ";" : ",";
   const rows = []; let row = [], cell = "", q = false;
   for (let i = 0; i < text.length; i++){ const ch = text[i];
@@ -241,7 +336,7 @@ app.post("/v1/sincronizar", async c => {
   const tipo = (c.req.header("content-type") || "").toLowerCase();
   let filas, modo = c.req.query("modo") || "precios", crearNuevos = c.req.query("crear") === "1";
   if (tipo.includes("json")){ const b = await cuerpo(c); filas = b.filas; modo = b.modo || modo; crearNuevos = b.crearNuevos ?? crearNuevos; }
-  else { const buf = Buffer.from(await c.req.arrayBuffer()); let t = new TextDecoder("utf-8").decode(buf); if (t.includes("�")) t = new TextDecoder("windows-1252").decode(buf); filas = filasDeCSV(t); }
+  else { const buf = Buffer.from(await c.req.arrayBuffer()); let t = new TextDecoder("utf-8").decode(buf); if (t.includes("\uFFFD")) t = new TextDecoder("windows-1252").decode(buf); filas = filasDeCSV(t); }
   if (!Array.isArray(filas) || !filas.length) throw fuera(400, "No llegaron filas para sincronizar.");
   if (filas.length > 50000) throw fuera(413, "Son demasiadas filas para una sola vez (máximo 50.000).");
   if (!["precios", "completo"].includes(modo)) throw fuera(400, "Modo desconocido");
