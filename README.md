@@ -6,7 +6,7 @@ Tienda online de **Purafarma, farmacias y perfumerías** (Mar del Plata). Son p�
 
 | Archivo | Qué es |
 | --- | --- |
-| `index.html` | Portada (landing): toldo, logo, fondos rotativos, estante de categorías, "¿Qué necesitás hoy?", destacados, marcas, receta de skincare, ofertas y categorías. Al pasar por nutrición deportiva cambia a la paleta **Purafarma Sport**. |
+| `index.html` | Portada (landing) dinámica: escenas que se quedan fijas mientras se scrollea (productos en órbita y buscador, pasos de compra, categorías que desfilan de costado, Sport), destacados, receta de rutina de piel, marcas y ayuda. Con "reducir movimiento" se ve todo quieto. Los datos de contacto (WhatsApp, dirección, horarios) se completan en la constante `CONTACTO`. |
 | `tienda.html` | Catálogo: banners de marcas, filtros por categoría y marca, búsqueda, carrito con sugerencias y cierre del pedido (resumen para enviar por WhatsApp). Con la categoría nutrición deportiva elegida usa la paleta Sport. |
 | `backoffice.html` | Administración: productos (edición en la tabla), banners, fondos de portada e importación de planillas CSV de Plex y fotos en lote. |
 | `packshot.js` | Dibuja la ilustración de cada producto (tubo, gotero, pote, perfume, etc.) en los colores de su marca mientras no tenga foto. Lo usan las tres páginas. |

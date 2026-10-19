@@ -617,16 +617,19 @@ function renderCart(){
     if (!items.length){ body.innerHTML = `<div class="empty" style="margin-top:8px"><h3>Tu carrito está vacío</h3><p>Sumá productos desde el catálogo y aparecen acá.</p><button class="btn btn-ink" data-close data-goto="catalog">Ver productos</button></div>`; foot.hidden = true; return; }
     foot.hidden = false;
     const inCart = new Set(items.map(x => x.p.id)), brands = new Set(items.map(x => x.p.marca)), cats = new Set(items.map(x => x.p.categoria));
-    const ups = S.products.filter(p => !inCart.has(p.id) && (p.stock ?? 1) > 0)
+    /* Con skincare en el carrito se sugiere completar la rutina (solo dermocosmética); si no, recomendaciones por categoría y marca */
+    const skin = cats.has("dermocosmetica");
+    const ups = S.products.filter(p => !inCart.has(p.id) && (p.stock ?? 1) > 0 && (!skin || p.categoria === "dermocosmetica"))
       .map(p => ({ p, s: (brands.has(p.marca) ? 2 : 0) + (cats.has(p.categoria) ? 1 : 0) + (p.destacado ? .5 : 0) }))
-      .filter(x => x.s > 0).sort((a,b) => b.s - a.s).slice(0,3).map(x => x.p);
+      .filter(x => x.s >= 1).sort((a,b) => b.s - a.s).slice(0,3).map(x => x.p);
+    const upsHead = skin ? `<h3>Completá tu rutina</h3><p>Otros pasos de cuidado de la piel que combinan con lo que elegiste.</p>` : `<h3>Te recomendamos</h3><p>Productos parecidos a lo que elegiste.</p>`;
     body.innerHTML = items.map(({p,q}) => `<div class="line">
         <div class="thumb">${media(p, "")}</div>
         <div class="line-info"><p class="card-brand">${esc(p.marca||"")}</p><p class="n">${esc(p.nombre)}</p><p class="num" style="font-size:13px;color:var(--ink-2)">${money(p.precio)} c/u</p></div>
         <div class="line-ctrl"><span class="sum num">${money(p.precio*q)}</span>
           <div class="stepper light" role="group" aria-label="Cantidad"><button data-dec="${p.id}" aria-label="Quitar uno">${ICON.minus}</button><output class="num">${q}</output><button data-inc="${p.id}" aria-label="Agregar uno">${ICON.plus}</button></div></div>
       </div>`).join("") +
-      (ups.length ? `<div class="upsell"><h3>Completá tu rutina</h3><p>Productos que suelen llevarse juntos con lo que elegiste.</p>${ups.map(p => `<div class="up"><div class="thumb">${media(p,"")}</div><div><p>${esc(p.nombre)}</p><p class="p num">${money(p.precio)}</p></div><button class="plus" data-inc="${p.id}" aria-label="Sumar ${esc(p.nombre)}">${ICON.plus}</button></div>`).join("")}</div>` : "");
+      (ups.length ? `<div class="upsell">${upsHead}${ups.map(p => `<div class="up"><div class="thumb">${media(p,"")}</div><div><p>${esc(p.nombre)}</p><p class="p num">${money(p.precio)}</p></div><button class="plus" data-inc="${p.id}" aria-label="Sumar ${esc(p.nombre)}">${ICON.plus}</button></div>`).join("")}</div>` : "");
     foot.innerHTML = `<div class="totrow"><span>Subtotal</span><b class="num">${money(total)}</b></div><button class="btn btn-pink" id="toCheckout">Finalizar pedido</button>`;
     $("#toCheckout").onclick = () => { step = "form"; renderCart(); };
   } else if (step === "form"){
