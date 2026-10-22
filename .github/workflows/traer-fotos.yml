@@ -2,12 +2,15 @@ name: traer-fotos-temporal
 on:
   push:
     branches: [tmp-traer-fotos]
+permissions:
+  contents: write
 jobs:
   traer:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
       - run: |
-          mkdir fotos
+          mkdir -p fotos
           while read -r c u; do
             [ -z "$c" ] && continue
             curl -fsSL --retry 3 -o "fotos/$c.jpg" "$u" && echo "ok $c" || echo "FALLO $c"
@@ -31,7 +34,10 @@ jobs:
           4005900140906 https://d2eebw31vcx88p.cloudfront.net/selmadigital/uploads-r/p/cb04466fde7628ed3780ffa3f3318c5befd74dde.jpg
           LISTA
           ls -la fotos
-      - uses: actions/upload-artifact@v4
-        with:
-          name: fotos
-          path: fotos
+      - run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git rm -q .github/workflows/traer-fotos.yml
+          git add fotos
+          git commit -m "Fotos traidas"
+          git push
