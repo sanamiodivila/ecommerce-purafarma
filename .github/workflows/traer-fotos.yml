@@ -1,0 +1,37 @@
+name: traer-fotos-temporal
+on:
+  push:
+    branches: [tmp-traer-fotos]
+jobs:
+  traer:
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          mkdir fotos
+          while read -r c u; do
+            [ -z "$c" ] && continue
+            curl -fsSL --retry 3 -o "fotos/$c.jpg" "$u" && echo "ok $c" || echo "FALLO $c"
+          done <<'LISTA'
+          7798008191693 https://d2eebw31vcx88p.cloudfront.net/selmadigital/uploads-r/p/f6a38c2d517d15c0e0773df348b4b7f714d3f74f.jpg
+          7793742004995 https://d2eebw31vcx88p.cloudfront.net/selmadigital/uploads-r/p/f6bba0c29f6c761d7fc59e11ca9454f21abe8946.jpg
+          7897930776609 https://d2eebw31vcx88p.cloudfront.net/selmadigital/uploads-r/p/ea0aa47911001ce3c5cbba8d403f8eef13c8503f.jpg
+          7793742108518 https://d2eebw31vcx88p.cloudfront.net/selmadigital/uploads/a0aaf20dfbbc50d8045cb0381eaa497edc268344.jpg
+          7793742107139 https://d2eebw31vcx88p.cloudfront.net/selmadigital/uploads-r/p/dffb93ce9e1a83111ca838d53c418462302d7a7a.jpg
+          7790520009494 https://d2eebw31vcx88p.cloudfront.net/selmadigital/uploads/5d74a6bfe46cffbf2e4e22e75276537cc4362bb4.jpg
+          7319470066793 https://d2eebw31vcx88p.cloudfront.net/selmadigital/uploads/9ce407f24501988e03c7d9a060502e6a9446957f.jpg
+          7792981010026 https://d2eebw31vcx88p.cloudfront.net/selmadigital/uploads-r/p/abd6a1f5dfb8d231ec43b54ca3da7083044aebdf.jpg
+          4006000127026 https://d2eebw31vcx88p.cloudfront.net/selmadigital/uploads-r/p/7380ea00bfc205f8a7005bf72223fda0a4701bdf.jpg
+          4006000172514 https://d2eebw31vcx88p.cloudfront.net/selmadigital/uploads/8018d608ca09e21148a48fa0b77f18e6101a47a8.jpg
+          4006000172521 https://d2eebw31vcx88p.cloudfront.net/selmadigital/uploads-r/p/b2bfef35afae7c8d461c8e1bd3cd049d22042aad.jpg
+          4005900994776 https://d2eebw31vcx88p.cloudfront.net/selmadigital/uploads-r/p/c4b70599fa43cd0fdae0302dd83cd6c282e07a7d.jpg
+          7612076457256 https://d2eebw31vcx88p.cloudfront.net/selmadigital/uploads-r/p/421268a8e8b91ad6258694e5a5daa0dfaa052879.jpg
+          7612076457430 https://d2eebw31vcx88p.cloudfront.net/selmadigital/uploads-r/p/3210e22c1fe0cf2046c3fc0a5c0323e713f8d63e.jpg
+          4006000242729 https://d2eebw31vcx88p.cloudfront.net/selmadigital/uploads-r/p/1be505f66e9f94d0be41ecd44cce1146fc0b56ff.jpg
+          3337875920582 https://d2eebw31vcx88p.cloudfront.net/selmadigital/uploads-r/p/cfeff108fb737cf223a1a8e72bf25a742293e503.jpg
+          4005900140906 https://d2eebw31vcx88p.cloudfront.net/selmadigital/uploads-r/p/cb04466fde7628ed3780ffa3f3318c5befd74dde.jpg
+          LISTA
+          ls -la fotos
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fotos
+          path: fotos
